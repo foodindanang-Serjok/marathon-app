@@ -6,6 +6,7 @@ var FILES = [
   "./manifest.json",
   "./icon.png",
   "./logo.png",
+  "./icon-512.png",
   "./meditation.m4a"
 ];
 
