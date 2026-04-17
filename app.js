@@ -1,39 +1,39 @@
 /* ========== ДАННЫЕ ========== */
 var DAYS = [
-{ num:1, name:“Точка решения”, sub:“Цель: первое ДА Я МОГУ”, emoji:“🌱”,
-morning:[{type:“audio”,title:“Медитация: Ты начинаешь новую жизнь”,dur:“5 мин”},{type:“task”,text:“Прослушать аффирмации и записать свою”}],
-day:[{type:“reminder”,text:“🔔 Ты уже отличаешься от 95% людей”}],
-evening:[{type:“journal”,q:“Что ты сделал сегодня?”},{type:“journal”,q:“Где победил себя?”}]
+{ num:1, name:"Точка решения", sub:"Цель: первое ДА Я МОГУ", emoji:"🌱",
+morning:[{type:"audio",title:"Медитация: Ты начинаешь новую жизнь",dur:"5 мин"},{type:"task",text:"Прослушать аффирмации и записать свою"}],
+day:[{type:"reminder",text:"🔔 Ты уже отличаешься от 95% людей"}],
+evening:[{type:"journal",q:"Что ты сделал сегодня?"},{type:"journal",q:"Где победил себя?"}]
 },
-{ num:2, name:“Первая победа”, sub:“Цель: система работает”, emoji:“⚡”,
-morning:[{type:“audio”,title:“Медитация: Уверенность”,dur:“7 мин”},{type:“task”,text:“Аффирмации своим голосом — запиши на телефон”}],
-day:[{type:“reminder”,text:“🔥 2 дня подряд! Система работает”}],
-evening:[{type:“journal”,q:“3 победы за сегодня:”},{type:“journal”,q:“1 ошибка (без самобичевания):”}]
+{ num:2, name:"Первая победа", sub:"Цель: система работает", emoji:"⚡",
+morning:[{type:"audio",title:"Медитация: Уверенность",dur:"7 мин"},{type:"task",text:"Аффирмации своим голосом -- запиши на телефон"}],
+day:[{type:"reminder",text:"🔥 2 дня подряд! Система работает"}],
+evening:[{type:"journal",q:"3 победы за сегодня:"},{type:"journal",q:"1 ошибка (без самобичевания):"}]
 },
-{ num:3, name:“Сопротивление”, sub:“Ключевой день — большинство сливается”, emoji:“💪”,
-morning:[{type:“audio”,title:“Медитация: Дисциплина”,dur:“10 мин”},{type:“task”,text:“Аффирмации”}],
-day:[{type:“reminder”,text:“💡 Сегодня будет сложно. Это нормально. Ты растёшь.”}],
-evening:[{type:“journal”,q:“Где хотел слиться сегодня?”},{type:“journal”,q:“Почему НЕ слился?”}]
+{ num:3, name:"Сопротивление", sub:"Ключевой день -- большинство сливается", emoji:"💪",
+morning:[{type:"audio",title:"Медитация: Дисциплина",dur:"10 мин"},{type:"task",text:"Аффирмации"}],
+day:[{type:"reminder",text:"💡 Сегодня будет сложно. Это нормально. Ты растёшь."}],
+evening:[{type:"journal",q:"Где хотел слиться сегодня?"},{type:"journal",q:"Почему НЕ слился?"}]
 },
-{ num:4, name:“Перелом”, sub:“Цель: ощущение новой личности”, emoji:“🦋”,
-morning:[{type:“audio”,title:“Медитация: Новая версия тебя”,dur:“10 мин”},{type:“task”,text:“Аффирмации с усилением эмоции”}],
-day:[{type:“reminder”,text:“🏆 Новый уровень: ты уже не новичок”}],
-evening:[{type:“journal”,q:“Кем я был сегодня?”}]
+{ num:4, name:"Перелом", sub:"Цель: ощущение новой личности", emoji:"🦋",
+morning:[{type:"audio",title:"Медитация: Новая версия тебя",dur:"10 мин"},{type:"task",text:"Аффирмации с усилением эмоции"}],
+day:[{type:"reminder",text:"🏆 Новый уровень: ты уже не новичок"}],
+evening:[{type:"journal",q:"Кем я был сегодня?"}]
 },
-{ num:5, name:“Азарт”, sub:“Цель: включить игру”, emoji:“🎯”,
-morning:[{type:“audio”,title:“Медитация: Энергия победителя”,dur:“10 мин”},{type:“task”,text:“Аффирмации”}],
-day:[{type:“reminder”,text:“🚀 Ты уже впереди большинства”}],
-evening:[{type:“journal”,q:“Лучший момент сегодняшнего дня:”}]
+{ num:5, name:"Азарт", sub:"Цель: включить игру", emoji:"🎯",
+morning:[{type:"audio",title:"Медитация: Энергия победителя",dur:"10 мин"},{type:"task",text:"Аффирмации"}],
+day:[{type:"reminder",text:"🚀 Ты уже впереди большинства"}],
+evening:[{type:"journal",q:"Лучший момент сегодняшнего дня:"}]
 },
-{ num:6, name:“Усиление”, sub:“Цель: привычка как норма”, emoji:“🔑”,
-morning:[{type:“audio”,title:“Медитация: Глубина”,dur:“10 мин”},{type:“task”,text:“Аффирмации — уже на автомате”}],
-day:[{type:“reminder”,text:“✨ Теперь ты человек, который делает”}],
-evening:[{type:“journal”,q:“1 результат, который раньше был невозможен:”}]
+{ num:6, name:"Усиление", sub:"Цель: привычка как норма", emoji:"🔑",
+morning:[{type:"audio",title:"Медитация: Глубина",dur:"10 мин"},{type:"task",text:"Аффирмации -- уже на автомате"}],
+day:[{type:"reminder",text:"✨ Теперь ты человек, который делает"}],
+evening:[{type:"journal",q:"1 результат, который раньше был невозможен:"}]
 },
-{ num:7, name:“Новая точка отсчёта”, sub:“Цель: зафиксировать трансформацию”, emoji:“🌟”,
-morning:[{type:“audio”,title:“Медитация: Ты изменился”,dur:“12 мин”},{type:“task”,text:“Аффирмации”}],
-day:[{type:“reminder”,text:“📊 Твои итоги 7 дней готовы”}],
-evening:[{type:“journal”,q:“Кем я был 7 дней назад?”},{type:“journal”,q:“Кто я сейчас?”}]
+{ num:7, name:"Новая точка отсчёта", sub:"Цель: зафиксировать трансформацию", emoji:"🌟",
+morning:[{type:"audio",title:"Медитация: Ты изменился",dur:"12 мин"},{type:"task",text:"Аффирмации"}],
+day:[{type:"reminder",text:"📊 Твои итоги 7 дней готовы"}],
+evening:[{type:"journal",q:"Кем я был 7 дней назад?"},{type:"journal",q:"Кто я сейчас?"}]
 }
 ];
 
@@ -67,11 +67,11 @@ var right = active
 : locked
 ? ‘<span class="lock-ic">🔒</span>’
 : ‘<div class="dprog">’ + dots + ‘</div>’;
-var cl = locked ? ‘’ : ‘onclick=“openDay(’ + d.num + ‘)”’;
-g.innerHTML += ’<div class=“day-card ’ + sc + ’” ’ + cl + ‘>’ +
+var cl = locked ? ‘’ : ‘onclick="openDay(’ + d.num + ‘)"’;
+g.innerHTML += ’<div class="day-card ’ + sc + ’" ’ + cl + ‘>’ +
 ‘<div class="dbadge ' + bc + '">’ + bi + ‘</div>’ +
 ‘<div class="dinfo">’ +
-’<div class="dname">День ’ + d.num + ’ — ’ + d.name + ‘</div>’ +
+’<div class="dname">День ’ + d.num + ’ -- ’ + d.name + ‘</div>’ +
 ‘<div class="dsub">’ + d.sub + ‘</div>’ +
 ‘</div>’ +
 right +
@@ -92,7 +92,7 @@ h += renderDayTask(n);
 if (d.day && d.day.length) {
 h += ‘<div class="tseg"><div class="slbl">☀️ День</div>’ + items(d.day, n, ‘dy’) + ‘</div>’;
 }
-h += ‘<div class="tseg"><div class="slbl">🌙 Вечер — Дневник успеха</div>’ + items(d.evening, n, ‘e’) + ‘</div>’;
+h += ‘<div class="tseg"><div class="slbl">🌙 Вечер -- Дневник успеха</div>’ + items(d.evening, n, ‘e’) + ‘</div>’;
 if (n === 7) h += day7block();
 document.getElementById(‘pBody’).innerHTML = h;
 var cta = document.getElementById(‘pCta’);
@@ -116,9 +116,9 @@ return ‘<div class="ablock">’ +
 ‘<div class="atitle">’ + it.title + ‘</div>’ +
 ‘<div class="adur">’ + it.dur + ‘</div>’ +
 ‘</div>’ +
-‘<audio id=“medAudio_’ + dn + ‘*’ + i + ‘” src=“meditation.m4a”’ +
-’ ontimeupdate=“checkMedStop(this);updateMedProgress(this,’ + dn + ‘,’ + i + ‘)”’ +
-’ onended=“resetMedProgress(’ + dn + ‘,’ + i + ‘)”>’ +
+‘<audio id="medAudio_’ + dn + ‘*’ + i + ‘" src="meditation.m4a"’ +
+’ ontimeupdate="checkMedStop(this);updateMedProgress(this,’ + dn + ‘,’ + i + ‘)"’ +
+’ onended="resetMedProgress(’ + dn + ‘,’ + i + ‘)">’ +
 ‘Ваш браузер не поддерживает аудио.’ +
 ‘</audio>’ +
 ‘<div style="margin-top:14px;">’ +
@@ -152,8 +152,8 @@ var jk  = ’j*’ + dn + ‘*’ + sec + ’*’ + i;
 var jval = journals[jk] || ‘’;
 return ‘<div class="jblock">’ +
 ‘<div class="jq">’ + it.q + ‘</div>’ +
-‘<textarea class=“jinput” id=”’ + jk + ‘” placeholder=“Напиши здесь…” rows=“3”’ +
-’ oninput=“saveJournal(this)”>’ + esc(jval) + ‘</textarea>’ +
+‘<textarea class="jinput" id="’ + jk + ‘" placeholder="Напиши здесь…" rows="3"’ +
+’ oninput="saveJournal(this)">’ + esc(jval) + ‘</textarea>’ +
 ‘</div>’;
 }
 return ‘’;
@@ -184,8 +184,8 @@ return ‘<div class="tseg">’ +
 ‘</div>’ +
 ‘<div id="dtItems_' + n + '">’ + itemsHtml + ‘</div>’ +
 ‘<div style="display:flex;gap:8px;margin-top:10px;">’ +
-‘<input class=“dt-textarea” id=“dtInput_’ + n + ‘” type=“text”’ +
-’ placeholder=“Добавить задачу…” style=“flex:1;min-height:auto;padding:10px 14px;resize:none;”>’ +
+‘<input class="dt-textarea" id="dtInput_’ + n + ‘" type="text"’ +
+’ placeholder="Добавить задачу…" style="flex:1;min-height:auto;padding:10px 14px;resize:none;">’ +
 ‘<button onclick="addDayTask(' + n + ')" style="background:var(--gold);color:var(--dark);border:none;border-radius:10px;padding:10px 16px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">+ Добавить</button>’ +
 ‘</div>’ +
 ‘</div>’ +
@@ -364,9 +364,9 @@ if (journals[jk] && journals[jk].trim().length > 0) journalDone++;
 // Итого всех действий
 var totalActions = checksDone + dtDone + journalDone;
 var motivArr = [
-{ icon:‘🌱’, text:‘Каждый шаг — это победа над вчерашней версией себя.’ },
+{ icon:‘🌱’, text:‘Каждый шаг -- это победа над вчерашней версией себя.’ },
 { icon:‘🔥’, text:‘Ты уже в топ 5% людей, которые вообще начали.’ },
-{ icon:‘💎’, text:‘Дисциплина — это свобода. Ты строишь её прямо сейчас.’ },
+{ icon:‘💎’, text:‘Дисциплина -- это свобода. Ты строишь её прямо сейчас.’ },
 { icon:‘🚀’, text:‘Большие перемены начинаются с маленьких ежедневных решений.’ },
 { icon:‘🏆’, text:‘Ты доказываешь себе каждый день: я человек, который делает.’ },
 { icon:‘⚡’, text:‘Энергия идёт туда, куда направлено внимание. Ты на верном пути.’ },
@@ -424,7 +424,7 @@ var check = isDone ? ‘✓’ : isActive ? ‘→’ : ‘’;
 html += ‘<div class="prog-day-row ' + rc + '">’ +
 ‘<div class="pdr-badge ' + bc + '">’ + bi + ‘</div>’ +
 ‘<div class="pdr-info">’ +
-’<div class="pdr-name">День ’ + d.num + ’ — ’ + d.name + ‘</div>’ +
+’<div class="pdr-name">День ’ + d.num + ’ -- ’ + d.name + ‘</div>’ +
 ‘<div class="pdr-sub">’ + dtStatus + ‘</div>’ +
 ‘</div>’ +
 ‘<div class="pdr-check">’ + check + ‘</div>’ +
@@ -616,7 +616,7 @@ if (p) p.textContent = ‘▶’;
 }
 
 function esc(s) {
-return s.replace(/&/g, ‘&’).replace(/</g, ‘<’).replace(/>/g, ‘>’).replace(/”/g, ‘"’);
+return s.replace(/&/g, ‘&’).replace(/</g, ‘<’).replace(/>/g, ‘>’).replace(/"/g, ‘"’);
 }
 
 /* ========== TOAST ========== */
@@ -734,20 +734,20 @@ console.log(‘Ошибка отправки:’, err);
 function calcPoints() {
 var pts = 0;
 
-// За каждый завершённый день — 10 баллов
+// За каждый завершённый день -- 10 баллов
 pts += doneDays.length * 10;
 
-// За каждую выполненную задачу дня — 5 баллов
+// За каждую выполненную задачу дня -- 5 баллов
 for (var i = 1; i <= 7; i++) {
 if (dayTasks[i] && dayTasks[i].items) {
 dayTasks[i].items.forEach(function(it) { if (it.done) pts += 5; });
 }
 }
 
-// За каждый чекбокс (аффирмации и задачи) — 2 балла
+// За каждый чекбокс (аффирмации и задачи) -- 2 балла
 Object.keys(tasks).forEach(function(dk) { pts += tasks[dk].length * 2; });
 
-// За заполненный профиль — 5 баллов
+// За заполненный профиль -- 5 баллов
 if (profile.name)   pts += 5;
 if (profile.pointA) pts += 5;
 if (profile.pointB) pts += 5;
@@ -762,7 +762,7 @@ var sub = document.getElementById(‘mePointsSub’);
 if (el) el.textContent = pts;
 if (sub) {
 var msg = pts === 0
-? ‘Выполняй задания и веди дневник — получай баллы!’
+? ‘Выполняй задания и веди дневник -- получай баллы!’
 : pts < 30
 ? ‘Хорошее начало! Продолжай в том же духе.’
 : pts < 70
@@ -780,7 +780,7 @@ localStorage.setItem(‘journals’, JSON.stringify(journals));
 
 /* ========== СБРОС НЕДЕЛИ ========== */
 function resetWeek() {
-var conf = confirm(“Сбросить весь прогресс и начать заново с Дня 1?”);
+var conf = confirm("Сбросить весь прогресс и начать заново с Дня 1?");
 if (!conf) return;
 
 // Очищаем все данные марафона
