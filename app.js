@@ -646,7 +646,7 @@ audio.currentTime = 634;
 function updateMedProgress(audio, dn, i) {
 var pct = (audio.currentTime / 634) * 100;
 var bar = document.getElementById('medProg_' + dn + '_' + i);
-var tim = document.getElementById('medTime*' + dn + '_' + i);
+var tim = document.getElementById('medTime_' + dn + '_' + i);
 if (bar) bar.style.width = Math.min(pct, 100) + '%';
 if (tim) {
 var s = Math.floor(audio.currentTime);
