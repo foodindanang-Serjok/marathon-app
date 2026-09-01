@@ -1,7 +1,7 @@
 /* ========== ДАННЫЕ ========== */
 var DAYS = [
 { num:1, name:"Точка решения", sub:"Цель: первое ДА Я МОГУ", emoji:"🌱",
-morning:[{type:"audio",title:"Медитация",dur:""},{type:"task",text:"Прослушать аффирмации и записать свою"}],
+morning:[{type:"audio",title:"Медитация",dur:""}],
 day:[{type:"reminder",text:"🔔 Ты уже отличаешься от 95% людей"}],
 evening:[{type:"journal",q:"Что ты сделал сегодня?"},{type:"journal",q:"Где победил себя?"}]
 },
@@ -87,7 +87,7 @@ document.getElementById('pLbl').textContent   = 'ДЕНЬ ' + d.num;
 document.getElementById('pTitle').textContent = d.name;
 document.getElementById('pSub').textContent   = d.sub;
 var h = '';
-h += '<div class="tseg"><div class="slbl">🌅 Утро</div>' + items(d.morning, n, 'm') + '</div>';
+h += '<div class="tseg"><div class="slbl">🌅 Утро — прослушай медитацию 10 минут</div>' + items(d.morning, n, 'm') + '</div>';
 h += renderDayTask(n);
 if (d.day && d.day.length) {
 h += '<div class="tseg"><div class="slbl">☀️ День</div>' + items(d.day, n, 'dy') + '</div>';
