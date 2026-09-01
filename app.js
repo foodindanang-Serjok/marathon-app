@@ -1,7 +1,7 @@
 /* ========== ДАННЫЕ ========== */
 var DAYS = [
 { num:1, name:"Точка решения", sub:"Цель: первое ДА Я МОГУ", emoji:"🌱",
-morning:[{type:"audio",title:"Медитация: Ты начинаешь новую жизнь",dur:"5 мин"},{type:"task",text:"Прослушать аффирмации и записать свою"}],
+morning:[{type:"audio",title:"Медитация",dur:""},{type:"task",text:"Прослушать аффирмации и записать свою"}],
 day:[{type:"reminder",text:"🔔 Ты уже отличаешься от 95% людей"}],
 evening:[{type:"journal",q:"Что ты сделал сегодня?"},{type:"journal",q:"Где победил себя?"}]
 },
@@ -112,10 +112,6 @@ function items(arr, dn, sec) {
 return arr.map(function(it, i) {
 if (it.type === 'audio') {
       return '<div class="ablock">' +
-        '<div class="ainfo">' +
-          '<div class="atitle">' + it.title + '</div>' +
-          '<div class="adur">' + it.dur + '</div>' +
-        '</div>' +
         '<audio controls style="width:100%;margin-top:10px;border-radius:8px;" src="meditation.m4a" ontimeupdate="checkMedStop(this)">' +
           'Ваш браузер не поддерживает аудио.' +
         '</audio>' +
