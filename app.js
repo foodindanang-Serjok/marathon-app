@@ -111,31 +111,17 @@ document.getElementById('dayPanel').classList.add('open');
 function items(arr, dn, sec) {
 return arr.map(function(it, i) {
 if (it.type === 'audio') {
-return '<div class="ablock">' +
-'<div class="ainfo">' +
-'<div class="atitle">' + it.title + '</div>' +
-'<div class="adur">' + it.dur + '</div>' +
-'</div>' +
-'<audio id="medAudio_' + dn + '*' + i + '" src="meditation.m4a"' +
-' ontimeupdate="checkMedStop(this);updateMedProgress(this,' + dn + ',' + i + ')"' +
-' onended="resetMedProgress(' + dn + ',' + i + ')">' +
-'Ваш браузер не поддерживает аудио.' +
-'</audio>' +
-'<div style="margin-top:14px;">' +
-'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
-'<div id="medTime_' + dn + '_' + i + '" style="font-size:12px;color:var(--gold-light);font-family:Montserrat,sans-serif;">0:00</div>' +
-'<div style="font-size:12px;color:var(--text-dim);font-family:Montserrat,sans-serif;">10:34</div>' +
-'</div>' +
-'<div style="height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;cursor:pointer;" onclick="seekMed(event,this,' + dn + ',' + i + ')">' +
-'<div id="medProg_' + dn + '_' + i + '" style="height:100%;width:0%;background:linear-gradient(to right,var(--gold),var(--gold-light));border-radius:2px;transition:width .5s linear;"></div>' +
-'</div>' +
-'<div style="display:flex;justify-content:center;gap:16px;margin-top:14px;">' +
-'<button onclick="toggleMed(' + dn + ',' + i + ')" id="medBtn_' + dn + '_' + i + '" style="background:var(--gold);color:var(--dark);border:none;border-radius:50%;width:48px;height:48px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">▶</button>' +
-'</div>' +
-'</div>' +
-'</div>';
-}
-if (it.type === 'task') {
+      return '<div class="ablock">' +
+        '<div class="ainfo">' +
+          '<div class="atitle">' + it.title + '</div>' +
+          '<div class="adur">' + it.dur + '</div>' +
+        '</div>' +
+        '<audio controls style="width:100%;margin-top:10px;border-radius:8px;" src="meditation.m4a" ontimeupdate="checkMedStop(this)">' +
+          'Ваш браузер не поддерживает аудио.' +
+        '</audio>' +
+      '</div>';
+    }
+    if (it.type === 'task') {
 var k  = dn + '*' + sec + '*' + i;
 var dk = tasks['day' + dn] || [];
 var dne = dk.indexOf(k) >= 0;
@@ -637,54 +623,14 @@ setTimeout(function() { t.remove(); }, 400);
 
 /* ========== ПЛЕЕР МЕДИТАЦИИ ========== */
 function checkMedStop(audio) {
-if (audio.currentTime >= 634) {
-audio.pause();
-audio.currentTime = 634;
-}
+  if (audio.currentTime >= 634) {
+    audio.pause();
+    audio.currentTime = 634;
+  }
+
 }
 
-function updateMedProgress(audio, dn, i) {
-var pct = (audio.currentTime / 634) * 100;
-var bar = document.getElementById('medProg_' + dn + '_' + i);
-var tim = document.getElementById('medTime_' + dn + '_' + i);
-if (bar) bar.style.width = Math.min(pct, 100) + '%';
-if (tim) {
-var s = Math.floor(audio.currentTime);
-var m = Math.floor(s / 60);
-s = s % 60;
-tim.textContent = m + ':' + (s < 10 ? '0' : '') + s;
-}
-}
 
-function resetMedProgress(dn, i) {
-var bar = document.getElementById('medProg_' + dn + '_' + i);
-var tim = document.getElementById('medTime_' + dn + '_' + i);
-var btn = document.getElementById('medBtn_' + dn + '_' + i);
-if (bar) bar.style.width = '0%';
-if (tim) tim.textContent = '0:00';
-if (btn) { btn.textContent = '▶'; btn.style.background = 'var(--gold)'; }
-}
-
-function toggleMed(dn, i) {
-var audio = document.getElementById('medAudio_' + dn + '_' + i);
-var btn   = document.getElementById('medBtn_' + dn + '_' + i);
-if (!audio) return;
-if (audio.paused) {
-audio.play();
-if (btn) { btn.textContent = '⏸'; btn.style.background = 'var(--accent)'; }
-} else {
-audio.pause();
-if (btn) { btn.textContent = '▶'; btn.style.background = 'var(--gold)'; }
-}
-}
-
-function seekMed(event, bar, dn, i) {
-var audio = document.getElementById('medAudio_' + dn + '_' + i);
-if (!audio) return;
-var rect = bar.getBoundingClientRect();
-var pct  = (event.clientX - rect.left) / rect.width;
-audio.currentTime = Math.min(pct * 634, 634);
-}
 
 /* ========== ПРОФИЛЬ ========== */
 var profile = JSON.parse(localStorage.getItem('profile') || '{}');
