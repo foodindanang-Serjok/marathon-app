@@ -645,7 +645,7 @@ audio.currentTime = 634;
 
 function updateMedProgress(audio, dn, i) {
 var pct = (audio.currentTime / 634) * 100;
-var bar = document.getElementById('medProg_' + dn + '*' + i);
+var bar = document.getElementById('medProg_' + dn + '_' + i);
 var tim = document.getElementById('medTime*' + dn + '_' + i);
 if (bar) bar.style.width = Math.min(pct, 100) + '%';
 if (tim) {
@@ -657,24 +657,24 @@ tim.textContent = m + ':' + (s < 10 ? '0' : '') + s;
 }
 
 function resetMedProgress(dn, i) {
-var bar = document.getElementById('medProg_' + dn + '*' + i);
-var tim = document.getElementById('medTime*' + dn + '*' + i);
-var btn = document.getElementById('medBtn*' + dn + '_' + i);
+var bar = document.getElementById('medProg_' + dn + '_' + i);
+var tim = document.getElementById('medTime_' + dn + '_' + i);
+var btn = document.getElementById('medBtn_' + dn + '_' + i);
 if (bar) bar.style.width = '0%';
 if (tim) tim.textContent = '0:00';
-if (btn) btn.textContent = '▶';
+if (btn) { btn.textContent = '▶'; btn.style.background = 'var(--gold)'; }
 }
 
 function toggleMed(dn, i) {
-var audio = document.getElementById('medAudio_' + dn + '*' + i);
-var btn   = document.getElementById('medBtn*' + dn + '_' + i);
+var audio = document.getElementById('medAudio_' + dn + '_' + i);
+var btn   = document.getElementById('medBtn_' + dn + '_' + i);
 if (!audio) return;
 if (audio.paused) {
 audio.play();
-if (btn) btn.textContent = '⏸';
+if (btn) { btn.textContent = '⏸'; btn.style.background = 'var(--accent)'; }
 } else {
 audio.pause();
-if (btn) btn.textContent = '▶';
+if (btn) { btn.textContent = '▶'; btn.style.background = 'var(--gold)'; }
 }
 }
 
