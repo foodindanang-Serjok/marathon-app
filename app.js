@@ -3,7 +3,7 @@ var DAYS = [
 { num:1, name:"Точка решения", sub:"Цель: первое ДА Я МОГУ", emoji:"🌱",
 morning:[{type:"audio",title:"Медитация",dur:""}],
 day:[{type:"reminder",text:"🔔 Ты уже отличаешься от 95% людей"}],
-evening:[{type:"journal",q:"Что ты сделал сегодня?"},{type:"journal",q:"Где победил себя?"}]
+evening:[{type:"journal",q:"Главное действие за сегодня:"},{type:"journal",q:"Где победил себя?"}]
 },
 { num:2, name:"Первая победа", sub:"Цель: система работает", emoji:"⚡",
 morning:[{type:"audio",title:"Медитация: Уверенность",dur:"7 мин"},{type:"task",text:"Аффирмации своим голосом -- запиши на телефон"}],
