@@ -118,7 +118,7 @@ if (it.type === 'audio') {
       '</div>';
     }
     if (it.type === 'task') {
-var k  = dn + '*' + sec + '*' + i;
+var k  = dn + '_' + sec + '_' + i;
 var dk = tasks['day' + dn] || [];
 var dne = dk.indexOf(k) >= 0;
 return '<div class="ti' + (dne ? ' done' : '') + '" id="ti_' + k + '" onclick="tapTask(\'' + k + '\',' + dn + ')">' +
@@ -130,7 +130,7 @@ if (it.type === 'reminder') {
 return '<div style="background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--gold-light);font-style:italic;margin-bottom:8px;">' + it.text + '</div>';
 }
 if (it.type === 'journal') {
-var jk  = 'j*' + dn + '*' + sec + '*' + i;
+var jk  = 'j_' + dn + '_' + sec + '_' + i;
 var jval = journals[jk] || '';
 return '<div class="jblock">' +
 '<div class="jq">' + it.q + '</div>' +
