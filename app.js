@@ -749,14 +749,16 @@ toast('🔄 Марафон сброшен! Начинаем с Дня 1!');
 var currentTheme = localStorage.getItem('theme') || 'dark';
 
 function applyTheme(theme) {
+  var ic  = document.getElementById('themeIc');
+  var lbl = document.getElementById('themeLbl');
   if (theme === 'light') {
     document.body.classList.add('light');
-    document.getElementById('themeIc').textContent = '☀️';
-    document.getElementById('themeLbl').textContent = 'Светлая';
+    if (ic)  ic.textContent  = '☀️';
+    if (lbl) lbl.textContent = 'Светлая';
   } else {
     document.body.classList.remove('light');
-    document.getElementById('themeIc').textContent = '🌙';
-    document.getElementById('themeLbl').textContent = 'Тёмная';
+    if (ic)  ic.textContent  = '🌙';
+    if (lbl) lbl.textContent = 'Тёмная';
   }
   currentTheme = theme;
   localStorage.setItem('theme', theme);
