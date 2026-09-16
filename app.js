@@ -744,6 +744,29 @@ toast('🔄 Марафон сброшен! Начинаем с Дня 1!');
 }
 
 
+
+/* ========== ТЕМА ========== */
+var currentTheme = localStorage.getItem('theme') || 'dark';
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('themeIc').textContent = '☀️';
+    document.getElementById('themeLbl').textContent = 'Светлая';
+  } else {
+    document.body.classList.remove('light');
+    document.getElementById('themeIc').textContent = '🌙';
+    document.getElementById('themeLbl').textContent = 'Тёмная';
+  }
+  currentTheme = theme;
+  localStorage.setItem('theme', theme);
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
 /* ========== INIT ========== */
+applyTheme(currentTheme);
 renderMain();
 renderAffs();
