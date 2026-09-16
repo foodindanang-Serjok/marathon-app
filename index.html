@@ -445,11 +445,55 @@ cursor:pointer; transition:all .25s; display:flex; align-items:center; justify-c
 .dt-item-del:hover { color:#ff6b6b; }
 
 
+
+/* ========== СВЕТЛАЯ ТЕМА ========== */
+body.light {
+  --gold: #B8860B;
+  --gold-light: #DAA520;
+  --gold-dim: rgba(184,134,11,0.15);
+  --dark: #F5F0E8;
+  --dark-2: #EDE8DF;
+  --dark-3: #E0D9CE;
+  --text: #1A1A2E;
+  --text-dim: rgba(26,26,46,0.65);
+  --text-muted: rgba(26,26,46,0.45);
+  --accent: #6B4FD4;
+}
+body.light body::before { opacity: 0.1; }
+body.light .amb1 { background:radial-gradient(circle,rgba(184,134,11,0.06),transparent 70%); }
+body.light .amb2 { background:radial-gradient(circle,rgba(107,79,212,0.04),transparent 70%); }
+
+/* Переключатель темы */
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 200;
+  background: var(--dark-3);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all .3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.theme-toggle:hover { border-color: rgba(201,168,76,.5); }
+.theme-toggle .theme-lbl {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: Montserrat, sans-serif;
+}
 </style>
 
 </head>
 <body>
 
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"><span id="themeIc">🌙</span><span class="theme-lbl" id="themeLbl">Тёмная</span></button>
 <div class="amb amb1"></div>
 <div class="amb amb2"></div>
 
