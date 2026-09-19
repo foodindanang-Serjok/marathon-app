@@ -473,6 +473,44 @@ body.light .day-card { background:var(--dark-2); border-color:rgba(0,0,0,.08); }
 body.light .streak-card { background:linear-gradient(135deg,var(--dark-3),var(--dark-2)); }
 body.light .panel, body.light .prog-screen,
 body.light .aff-screen, body.light .me-screen { background:var(--dark); }
+
+/* Небольшое обновление: читаемость и обратная связь */
+.dname { font-size:16px; line-height:1.4; white-space:normal; overflow:visible; text-overflow:clip; }
+.dsub { font-size:14px; line-height:1.5; }
+.day-card.active { display:grid; grid-template-columns:46px minmax(0,1fr); column-gap:16px; row-gap:10px; }
+.day-card.active .abadge { position:static; grid-column:2; margin:0; justify-self:start; }
+.ttxt, .dt-item-text, .atitle, .jq, .ac-text { font-size:15px; line-height:1.6; }
+.jinput, .dt-textarea, .add-ta, .me-input, .me-textarea { font-size:16px; line-height:1.6; }
+.ni { font-size:12px; letter-spacing:.3px; }
+.bot-nav { padding-left:14px; padding-right:14px; gap:6px; }
+.day-card.locked { opacity:.6; }
+.ti.done { opacity:.75; }
+.dt-item-done { opacity:.75; }
+.ti.completion-flash, .dt-item.completion-flash { animation:completionGlow .3s ease-out; }
+.completion-flash .tck, .completion-flash .dt-check { animation:completionCheck .26s ease-out; }
+@keyframes completionGlow {
+  from { box-shadow:0 0 0 2px rgba(201,168,76,.45); background:var(--gold-dim); }
+  to { box-shadow:0 0 0 0 rgba(201,168,76,0); }
+}
+@keyframes completionCheck {
+  0% { transform:scale(.82); }
+  65% { transform:scale(1.12); }
+  100% { transform:scale(1); }
+}
+@media (max-width:360px) {
+  .days-grid { padding-left:18px; padding-right:18px; }
+  .day-card { padding:16px 14px; gap:12px; }
+  .day-card.active { column-gap:12px; }
+  .ni { font-size:11px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation:none !important; transition:none !important; }
+}
+
+/* Нижняя навигация доступна во всех основных разделах. */
+.app { z-index:auto; }
+.bot-nav { z-index:95; padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px)); }
+.progbody, .affbody, .mebody { padding-bottom:calc(130px + env(safe-area-inset-bottom, 0px)); }
 </style>
 
 </head>
@@ -641,5 +679,17 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
+<script>
+// Анимация только после отметки пользователем, без изменения логики заданий.
+document.addEventListener('click', function(event) {
+  var row = event.target.closest('.ti, .dt-item');
+  if (!row || !(row.classList.contains('done') || row.classList.contains('dt-item-done'))) return;
+  if (row.classList.contains('dt-item') && !event.target.closest('.dt-check')) return;
+  row.classList.remove('completion-flash');
+  void row.offsetWidth;
+  row.classList.add('completion-flash');
+  setTimeout(function() { row.classList.remove('completion-flash'); }, 350);
+});
+</script>
 </body>
 </html>
