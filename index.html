@@ -511,6 +511,25 @@ body.light .aff-screen, body.light .me-screen { background:var(--dark); }
 .app { z-index:auto; }
 .bot-nav { z-index:95; padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px)); }
 .progbody, .affbody, .mebody { padding-bottom:calc(130px + env(safe-area-inset-bottom, 0px)); }
+
+/* ========== ТЕЛЕФОН И АВТОЗАПОЛНЕНИЕ ========== */
+.me-input { font-size:16px; }
+.me-input:-webkit-autofill, .me-input:-webkit-autofill:hover, .me-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  -webkit-box-shadow: 0 0 0 1000px var(--dark-3) inset;
+  box-shadow: 0 0 0 1000px var(--dark-3) inset;
+  caret-color: var(--text);
+  transition: background-color 99999s ease-out 0s;
+}
+.phone-row { display:flex; align-items:center; gap:10px; }
+.cc-wrap {
+  position:relative; flex-shrink:0; display:flex; align-items:center; gap:6px;
+  padding:6px 10px; border:1px solid rgba(201,168,76,.3); border-radius:10px;
+  background:rgba(255,255,255,.04); color:var(--text); font-size:15px; white-space:nowrap;
+}
+.cc-arrow { font-size:11px; color:var(--text-dim); }
+.cc-wrap select { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; font-size:16px; }
+.me-field.err { border-color: rgba(224,92,92,.6); }
 </style>
 
 </head>
@@ -633,15 +652,20 @@ body.light .aff-screen, body.light .me-screen { background:var(--dark); }
     <div class="me-section-lbl">👤 Личные данные</div>
     <div class="me-field">
       <div class="me-field-lbl">Имя</div>
-      <input class="me-input" id="meName" type="text" placeholder="Как тебя зовут?">
+      <input class="me-input" id="meName" type="text" autocomplete="name" autocapitalize="words" placeholder="Как тебя зовут?">
     </div>
     <div class="me-field">
       <div class="me-field-lbl">Email</div>
-      <input class="me-input" id="meEmail" type="email" placeholder="example@mail.com">
+      <input class="me-input" id="meEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="example@mail.com">
     </div>
     <div class="me-field">
       <div class="me-field-lbl">Телефон</div>
-      <input class="me-input" id="mePhone" type="tel" placeholder="+7 (___) ___-__-__">
+      <div class="phone-row">
+        <div class="cc-wrap"><span id="ccLabel">🇷🇺 +7</span><span class="cc-arrow">▾</span>
+          <select id="meCountry" onchange="onCountryChange()" aria-label="Страна"></select>
+        </div>
+        <input class="me-input" id="mePhone" type="tel" inputmode="tel" autocomplete="tel-national" oninput="onPhoneInput()" placeholder="(900) 123-45-67">
+      </div>
     </div>
 
     <!-- Точка А -->
