@@ -81,6 +81,12 @@ right +
 
 /* ========== ДЕТАЛЬНЫЙ ЭКРАН ========== */
 function openDay(n) {
+  // Блокировка без профиля
+  if (!profile.name || !profile.phone) {
+    toast('👤 Сначала заполните профиль');
+    setTimeout(function() { navTo('me'); }, 800);
+    return;
+  }
 var d = DAYS[n - 1];
 openNum = n;
 document.getElementById('pLbl').textContent   = 'ДЕНЬ ' + d.num;
@@ -766,6 +772,33 @@ function applyTheme(theme) {
 
 function toggleTheme() {
   applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+
+/* ========== TELEGRAM БОТ ========== */
+var TG_BOT = 'my_week_mentor_bot';
+
+function openTelegramBot() {
+  var name = profile.name || '';
+  var url = 'https://t.me/' + TG_BOT + '?start=app';
+  window.open(url, '_blank');
+}
+
+function showReminderInfo() {
+  var overlay = document.createElement('div');
+  overlay.id = 'tgOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;';
+  overlay.innerHTML = '<div style="background:var(--dark-3);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:28px;max-width:360px;width:100%;text-align:center;">' +
+    '<div style="font-size:40px;margin-bottom:16px;">🔔</div>' +
+    '<div style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--gold-light);margin-bottom:14px;">Настройка напоминаний</div>' +
+    '<div style="font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:24px;">' +
+      'Напоминания работают через Telegram-бота.<br><br>' +
+      'Он будет напоминать о предстоящих событиях и присылать дополнительные бесплатные материалы и книги для самостоятельного прочтения.' +
+    '</div>' +
+    '<button onclick="openTelegramBot()" style="width:100%;background:var(--gold);color:var(--dark);border:none;border-radius:12px;padding:14px;font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-bottom:10px;">📱 Перейти в Telegram</button>' +
+    '<button onclick="document.getElementById(\'tgOverlay\').remove()" style="width:100%;background:none;border:1px solid rgba(255,255,255,.1);color:var(--text-dim);border-radius:12px;padding:12px;font-family:Montserrat,sans-serif;font-size:12px;cursor:pointer;">Закрыть</button>' +
+  '</div>';
+  document.body.appendChild(overlay);
 }
 
 /* ========== INIT ========== */
