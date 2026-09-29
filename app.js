@@ -795,9 +795,23 @@ function toggleTheme() {
 var TG_BOT = 'my_week_mentor_bot';
 
 function openTelegramBot() {
-  var name = profile.name || '';
-  var url = 'https://t.me/' + TG_BOT + '?start=' + getUid();
-  window.open(url, '_blank');
+  var uid = getUid();
+  var appLink = 'tg://resolve?domain=' + TG_BOT + '&start=' + uid;
+  var webLink = 'https://t.me/' + TG_BOT + '?start=' + uid;
+  var ov = document.getElementById('tgOverlay');
+  if (ov) ov.remove();
+
+  // Открываем приложение Telegram напрямую, без промежуточного Safari
+  var left = false;
+  function onHide() { if (document.hidden) left = true; }
+  document.addEventListener('visibilitychange', onHide);
+  window.location.href = appLink;
+
+  // Если Telegram не установлен — через 1,5 сек открываем веб-версию
+  setTimeout(function () {
+    document.removeEventListener('visibilitychange', onHide);
+    if (!left && !document.hidden) window.location.href = webLink;
+  }, 1500);
 }
 
 function showReminderInfo() {
