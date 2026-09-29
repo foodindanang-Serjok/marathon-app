@@ -660,6 +660,10 @@ updatePoints();
 sendToSheets();
 }
 
+function getTz() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
+}
+
 function getUid() {
   var u = localStorage.getItem('uid');
   if (!u) {
@@ -677,6 +681,7 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({
 sheet:  'Приложение',
 uid:    getUid(),
+tz:     getTz(),
 name:   profile.name,
 email:  profile.email,
 phone:  profile.phone,
