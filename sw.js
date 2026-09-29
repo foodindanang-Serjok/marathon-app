@@ -1,4 +1,4 @@
-var CACHE = "marathon-v8";
+var CACHE = "marathon-v9";
 var FILES = [
   "./",
   "./index.html",
