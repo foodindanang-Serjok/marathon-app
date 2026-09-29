@@ -637,10 +637,117 @@ function checkMedStop(audio) {
 /* ========== ПРОФИЛЬ ========== */
 var profile = JSON.parse(localStorage.getItem('profile') || '{}');
 
+/* ========== ТЕЛЕФОН ========== */
+var COUNTRIES = [
+  ['RU', '🇷🇺', 'Россия', '7'], ['KZ', '🇰🇿', 'Казахстан', '7'], ['BY', '🇧🇾', 'Беларусь', '375'],
+  ['UA', '🇺🇦', 'Украина', '380'], ['UZ', '🇺🇿', 'Узбекистан', '998'], ['KG', '🇰🇬', 'Кыргызстан', '996'],
+  ['TJ', '🇹🇯', 'Таджикистан', '992'], ['TM', '🇹🇲', 'Туркменистан', '993'], ['AM', '🇦🇲', 'Армения', '374'],
+  ['GE', '🇬🇪', 'Грузия', '995'], ['AZ', '🇦🇿', 'Азербайджан', '994'], ['MD', '🇲🇩', 'Молдова', '373'],
+  ['TR', '🇹🇷', 'Турция', '90'], ['AE', '🇦🇪', 'ОАЭ', '971'], ['IL', '🇮🇱', 'Израиль', '972'],
+  ['TH', '🇹🇭', 'Таиланд', '66'], ['VN', '🇻🇳', 'Вьетнам', '84'], ['ID', '🇮🇩', 'Индонезия', '62'],
+  ['LK', '🇱🇰', 'Шри-Ланка', '94'], ['IN', '🇮🇳', 'Индия', '91'], ['CN', '🇨🇳', 'Китай', '86'],
+  ['KR', '🇰🇷', 'Южная Корея', '82'], ['JP', '🇯🇵', 'Япония', '81'], ['CY', '🇨🇾', 'Кипр', '357'],
+  ['RS', '🇷🇸', 'Сербия', '381'], ['ME', '🇲🇪', 'Черногория', '382'], ['DE', '🇩🇪', 'Германия', '49'],
+  ['ES', '🇪🇸', 'Испания', '34'], ['IT', '🇮🇹', 'Италия', '39'], ['FR', '🇫🇷', 'Франция', '33'],
+  ['PL', '🇵🇱', 'Польша', '48'], ['CZ', '🇨🇿', 'Чехия', '420'], ['LV', '🇱🇻', 'Латвия', '371'],
+  ['LT', '🇱🇹', 'Литва', '370'], ['EE', '🇪🇪', 'Эстония', '372'], ['GB', '🇬🇧', 'Великобритания', '44'],
+  ['US', '🇺🇸', 'США / Канада', '1']
+];
+
+function countryBy(key) {
+  for (var i = 0; i < COUNTRIES.length; i++) if (COUNTRIES[i][0] === key) return COUNTRIES[i];
+  return COUNTRIES[0];
+}
+
+function initCountries() {
+  var sel = document.getElementById('meCountry');
+  if (!sel || sel.options.length) return;
+  COUNTRIES.forEach(function (c) {
+    var o = document.createElement('option');
+    o.value = c[0];
+    o.textContent = c[1] + ' ' + c[2] + ' +' + c[3];
+    sel.appendChild(o);
+  });
+}
+
+function curCountry() { return countryBy(document.getElementById('meCountry').value || 'RU'); }
+
+function setCountry(key) {
+  var c = countryBy(key);
+  document.getElementById('meCountry').value = c[0];
+  document.getElementById('ccLabel').textContent = c[1] + ' +' + c[3];
+}
+
+function formatNational(code, d) {
+  if (code === '7') {
+    d = d.slice(0, 10);
+    if (!d) return '';
+    var s = '(' + d.slice(0, 3);
+    if (d.length > 3) s += ') ' + d.slice(3, 6);
+    if (d.length > 6) s += '-' + d.slice(6, 8);
+    if (d.length > 8) s += '-' + d.slice(8, 10);
+    return s;
+  }
+  return d.slice(0, 12).replace(/(\d{3})(?=\d)/g, '$1 ');
+}
+
+// Разбирает номер с кодом страны: "+7 900...", "8900...", "+66 81..."
+function splitPhone(raw, preferKey) {
+  var s = String(raw || '').trim(), digits = s.replace(/\D/g, '');
+  if (!digits) return {key: preferKey || 'RU', national: ''};
+  if (s.charAt(0) === '+' || s.indexOf('00') === 0) {
+    if (s.indexOf('00') === 0) digits = digits.slice(2);
+    var best = null;
+    COUNTRIES.forEach(function (c) {
+      if (digits.indexOf(c[3]) === 0 && (!best || c[3].length > best[3].length || (c[3] === best[3] && c[0] === preferKey))) best = c;
+    });
+    if (best) return {key: best[0], national: digits.slice(best[3].length)};
+  }
+  var c0 = countryBy(preferKey || 'RU');
+  if (c0[3] === '7' && digits.length === 11 && (digits[0] === '8' || digits[0] === '7')) digits = digits.slice(1);
+  return {key: c0[0], national: digits};
+}
+
+function onPhoneInput() {
+  var el = document.getElementById('mePhone');
+  var p = splitPhone(el.value, curCountry()[0]);
+  if (p.key !== curCountry()[0]) setCountry(p.key);
+  el.value = formatNational(countryBy(p.key)[3], p.national);
+  el.closest('.me-field').classList.remove('err');
+}
+
+function onCountryChange() {
+  setCountry(document.getElementById('meCountry').value);
+  onPhoneInput();
+  document.getElementById('mePhone').focus();
+}
+
+function phoneDigits() { return document.getElementById('mePhone').value.replace(/\D/g, ''); }
+
+function phoneValid() {
+  var n = phoneDigits().length;
+  return curCountry()[3] === '7' ? n === 10 : n >= 5 && n <= 12;
+}
+
+function fullPhone() {
+  var c = curCountry();
+  return '+' + c[3] + ' ' + document.getElementById('mePhone').value.trim();
+}
+
+function markErr(id, msg) {
+  var el = document.getElementById(id);
+  el.closest('.me-field').classList.add('err');
+  toast(msg);
+  el.focus();
+}
+
 function loadProfile() {
 document.getElementById('meName').value    = profile.name    || '';
 document.getElementById('meEmail').value   = profile.email   || '';
-document.getElementById('mePhone').value   = profile.phone   || '';
+initCountries();
+var ph = splitPhone(profile.phone || '', profile.country || 'RU');
+setCountry(ph.key);
+document.getElementById('mePhone').value = formatNational(countryBy(ph.key)[3], ph.national);
 document.getElementById('mePointA').value  = profile.pointA  || '';
 document.getElementById('mePointB').value  = profile.pointB  || '';
 updatePoints();
@@ -649,9 +756,17 @@ updatePoints();
 var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxlZJ6foAXk9536Y_G4J7DzYr9tbFJoWdlWXqYahtVXUMi-vyGaGHhLy6yl2B6ZlWAu/exec';
 
 function saveProfile() {
-profile.name   = document.getElementById('meName').value.trim();
-profile.email  = document.getElementById('meEmail').value.trim();
-profile.phone  = document.getElementById('mePhone').value.trim();
+var nm = document.getElementById('meName').value.trim();
+var em = document.getElementById('meEmail').value.replace(/\s+/g, '');
+document.querySelectorAll('.me-field.err').forEach(function (f) { f.classList.remove('err'); });
+if (!nm) { markErr('meName', '👤 Напиши своё имя'); return; }
+if (em && !/^[^@]+@[^@]+\.[^@]+$/.test(em)) { markErr('meEmail', '📧 Проверь email'); return; }
+if (!phoneValid()) { markErr('mePhone', '📱 Проверь номер телефона'); return; }
+document.getElementById('meEmail').value = em;
+profile.name    = nm;
+profile.email   = em;
+profile.country = curCountry()[0];
+profile.phone   = fullPhone();
 profile.pointA = document.getElementById('mePointA').value.trim();
 profile.pointB = document.getElementById('mePointB').value.trim();
 localStorage.setItem('profile', JSON.stringify(profile));
