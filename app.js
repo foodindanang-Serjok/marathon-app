@@ -660,12 +660,23 @@ updatePoints();
 sendToSheets();
 }
 
+function getUid() {
+  var u = localStorage.getItem('uid');
+  if (!u) {
+    u = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    localStorage.setItem('uid', u);
+  }
+  return u;
+}
+
 function sendToSheets() {
 fetch(SHEETS_URL, {
 method: 'POST',
 mode: 'no-cors',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({
+sheet:  'Приложение',
+uid:    getUid(),
 name:   profile.name,
 email:  profile.email,
 phone:  profile.phone,
@@ -780,7 +791,7 @@ var TG_BOT = 'my_week_mentor_bot';
 
 function openTelegramBot() {
   var name = profile.name || '';
-  var url = 'https://t.me/' + TG_BOT + '?start=app';
+  var url = 'https://t.me/' + TG_BOT + '?start=' + getUid();
   window.open(url, '_blank');
 }
 
