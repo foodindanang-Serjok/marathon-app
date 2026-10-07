@@ -21,11 +21,19 @@
   --bg: #F3EEE4; --bg-2: #EAE3D6; --card: #FFFDF8; --line: rgba(40,30,10,.10);
   --text: #1C160C; --dim: rgba(28,22,12,.72); --muted: rgba(28,22,12,.48);
   --gold: #A9801F; --gold-soft: rgba(169,128,31,.14); --on-gold: #FFFDF8; --danger: #B4442F;
+  --t-bg: linear-gradient(140deg, #F7E6B8, #EFD391); --t-fg: #5E3F05; --t-sub: rgba(94,63,5,.75);
+  --d-bg: linear-gradient(140deg, #F7DCE4, #EEC2D0); --d-fg: #7A1E3C; --d-sub: rgba(122,30,60,.72);
+  --p-bg: linear-gradient(140deg, #D6F1EA, #B9E3D8); --p-fg: #0D5446; --p-sub: rgba(13,84,70,.72);
+  --m-bg: linear-gradient(140deg, #E0E5FC, #C8D1F6); --m-fg: #28378A; --m-sub: rgba(40,55,138,.72);
 }
 :root[data-theme="dark"] {
   --bg: #0B0B10; --bg-2: #13131A; --card: #1A1A23; --line: rgba(255,255,255,.08);
   --text: #F6F1E7; --dim: rgba(246,241,231,.78); --muted: rgba(246,241,231,.50);
   --gold: #D4B25E; --gold-soft: rgba(212,178,94,.14); --on-gold: #0B0B10; --danger: #E07A66;
+  --t-bg: linear-gradient(140deg, #3D2D0D, #1F1708); --t-fg: #F4D27A; --t-sub: rgba(244,210,122,.72);
+  --d-bg: linear-gradient(140deg, #401A2B, #220E17); --d-fg: #F5A9BE; --d-sub: rgba(245,169,190,.72);
+  --p-bg: linear-gradient(140deg, #113A35, #0A201D); --p-fg: #8FE3D1; --p-sub: rgba(143,227,209,.72);
+  --m-bg: linear-gradient(140deg, #1E2650, #10142C); --m-fg: #AFBDFF; --m-sub: rgba(175,189,255,.72);
 }
 :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); }
 *, *::before, *::after { box-sizing: inherit; margin: 0; padding: 0; }
@@ -45,7 +53,7 @@ button { cursor: pointer; background: none; border: none; }
 .screen.on { display: block; }
 
 /* ===== Шапка ===== */
-.today { padding: 28px 0 22px; }
+.today { padding: 24px 20px 20px; }
 .today-day { font-family: 'Old Standard TT', 'Times New Roman', serif; font-weight: 400; font-size: 40px; line-height: 1.05; letter-spacing: -.01em; }
 .today-day small { display: block; font-weight: 400; font-style: italic; font-size: 22px; color: var(--gold); margin-top: 4px; }
 .today-hello { margin-top: 10px; color: var(--dim); font-size: 14px; }
@@ -134,6 +142,22 @@ button { cursor: pointer; background: none; border: none; }
 .row-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 16px 4px; border-bottom: 1px solid var(--line); text-align: left; }
 .row-btn span:last-child { color: var(--muted); }
 
+
+/* ===== Цветные шапки разделов ===== */
+.hero { margin: 14px 0 18px; padding: 24px 20px 20px; border-radius: 24px; background: var(--hb); color: var(--hf); }
+.hero .h2, .hero .today-day { color: var(--hf); padding: 0; }
+.hero .sub, .hero .today-hello { color: var(--hs); margin: 8px 0 0; }
+.hero .today-day small { color: var(--hs); }
+#s-tasks    { --hb: var(--t-bg); --hf: var(--t-fg); --hs: var(--t-sub); }
+#s-diary    { --hb: var(--d-bg); --hf: var(--d-fg); --hs: var(--d-sub); }
+#s-practice { --hb: var(--p-bg); --hf: var(--p-fg); --hs: var(--p-sub); }
+#s-me       { --hb: var(--m-bg); --hf: var(--m-fg); --hs: var(--m-sub); }
+.screen .h3 { color: var(--hf); }
+.nav button[data-s="tasks"].on    { color: var(--t-fg); }
+.nav button[data-s="diary"].on    { color: var(--d-fg); }
+.nav button[data-s="practice"].on { color: var(--p-fg); }
+.nav button[data-s="me"].on       { color: var(--m-fg); }
+
 /* ===== Окно Telegram ===== */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 40; display: flex; align-items: center; justify-content: center; padding: 24px; }
 .sheet { background: var(--card); border-radius: 22px; padding: 26px; max-width: 380px; width: 100%; text-align: center; }
@@ -158,7 +182,7 @@ button { cursor: pointer; background: none; border: none; }
 
   <!-- ===== ЗАДАЧИ ===== -->
   <section class="screen on" id="s-tasks">
-    <header class="today">
+    <header class="today hero">
       <div class="today-day" id="todayDay"></div>
       <div class="today-hello" id="hello"></div>
     </header>
@@ -173,8 +197,8 @@ button { cursor: pointer; background: none; border: none; }
 
   <!-- ===== ДНЕВНИК ===== -->
   <section class="screen" id="s-diary">
-    <h1 class="h2">Дневник</h1>
-    <p class="sub">Каждый день — новая страница. Всё сохраняется само.</p>
+    <div class="hero"><h1 class="h2">Дневник</h1>
+    <p class="sub">Каждый день — новая страница. Всё сохраняется само.</p></div>
     <div class="entry">
       <div class="entry-date" id="entryDate"></div>
       <div class="prompts" id="prompts"></div>
@@ -188,8 +212,8 @@ button { cursor: pointer; background: none; border: none; }
 
   <!-- ===== ПРАКТИКА ===== -->
   <section class="screen" id="s-practice">
-    <h1 class="h2">Практика</h1>
-    <p class="sub">Медитация утром и аффирмации — в любое время.</p>
+    <div class="hero"><h1 class="h2">Практика</h1>
+    <p class="sub">Медитация утром и аффирмации — в любое время.</p></div>
     <div class="med">
       <button class="med-play" id="medBtn" aria-label="Слушать медитацию">▶</button>
       <div class="med-body">
@@ -211,7 +235,8 @@ button { cursor: pointer; background: none; border: none; }
 
   <!-- ===== Я ===== -->
   <section class="screen" id="s-me">
-    <h1 class="h2">Я</h1>
+    <div class="hero"><h1 class="h2">Я</h1>
+    <p class="sub">Профиль, напоминания и твой прогресс.</p></div>
     <div class="gate" id="gate" hidden>Заполни имя и телефон — и можно начинать.</div>
     <div class="stats" id="stats">
       <div class="stat"><b id="stTasks">0</b><span>задач сделано</span></div>
@@ -272,7 +297,7 @@ button { cursor: pointer; background: none; border: none; }
 
 <script src="app.js"></script>
 <script>
-var APP_VERSION = '14';
+var APP_VERSION = '15';
 (function () {
   try {
     var prev = localStorage.getItem('appVersion');
