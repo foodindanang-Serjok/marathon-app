@@ -397,7 +397,7 @@ $('saveMe').onclick = function () {
   sendToSheets();
   loadProfile();
   renderHeader();
-  if (first) { toast('✅ Готово! Можно начинать'); showScreen('tasks'); }
+  if (first) showScreen('tasks');
   else toast('✅ Профиль сохранён');
 };
 
