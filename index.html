@@ -530,6 +530,31 @@ body.light .aff-screen, body.light .me-screen { background:var(--dark); }
 .cc-arrow { font-size:11px; color:var(--text-dim); }
 .cc-wrap select { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; font-size:16px; }
 .me-field.err { border-color: rgba(224,92,92,.6); }
+
+/* ========== ОБНОВЛЕНИЕ ПРИЛОЖЕНИЯ ========== */
+.upd-btn {
+  width:100%; background:none; color:var(--gold-light);
+  border:1px solid rgba(201,168,76,.35); border-radius:14px; padding:15px;
+  font-family:'Montserrat',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .25s;
+  margin-top:10px; display:flex; align-items:center; justify-content:center; gap:10px;
+}
+.upd-btn:hover { border-color:var(--gold); background:var(--gold-dim); }
+.upd-btn:disabled { opacity:.6; cursor:default; }
+.upd-ver { text-align:center; font-size:11px; letter-spacing:1px; color:var(--text-muted); margin-top:8px; }
+.upd-toast {
+  position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
+  z-index:300; width:calc(100% - 32px); max-width:440px;
+  background:var(--dark-3); border:1px solid var(--gold); border-radius:16px;
+  padding:14px 16px; display:none; align-items:center; gap:12px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35); font-size:13px; line-height:1.4; color:var(--text);
+}
+.upd-toast.show { display:flex; }
+.upd-toast button {
+  flex-shrink:0; background:var(--gold); color:var(--dark); border:none; border-radius:10px;
+  padding:10px 14px; font-family:'Montserrat',sans-serif; font-size:11px; font-weight:600;
+  letter-spacing:1.5px; text-transform:uppercase; cursor:pointer;
+}
 </style>
 
 </head>
@@ -689,20 +714,69 @@ body.light .aff-screen, body.light .me-screen { background:var(--dark); }
       <span style="font-size:20px;">🔔</span> Настроить напоминание
     </button>
 
+    <!-- Кнопка обновления -->
+    <button class="upd-btn" id="updBtn" onclick="updateApp()"><span style="font-size:18px;">🔄</span> <span id="updTx">Обновить приложение</span></button>
+    <div class="upd-ver" id="updVer"></div>
+
   </div>
 </div>
 
 <script src="app.js"></script>
+<div class="upd-toast" id="updToast"><span style="flex:1;">✨ Загружена новая версия приложения</span><button onclick="location.reload()">Обновить</button></div>
+
 <script>
+// ===== Service Worker + кнопка обновления =====
+var swReg = null;
+var updClicked = false;
+
+function showVersion() {
+  if (!window.caches) return;
+  caches.keys().then(function(keys) {
+    var k = keys.filter(function(x) { return x.indexOf('marathon-') === 0; })[0];
+    if (k) document.getElementById('updVer').textContent = 'Версия: ' + k.replace('marathon-', '');
+  });
+}
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('./sw.js')
-      .then(function(reg) {
-        console.log('SW зарегистрирован');
-      })
-      .catch(function(err) {
-        console.log('SW ошибка:', err);
-      });
+      .then(function(reg) { swReg = reg; showVersion(); })
+      .catch(function(err) { console.log('SW ошибка:', err); });
+  });
+
+  var hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (updClicked) { location.reload(); return; }
+    // Обновление пришло само — предлагаем перезагрузить
+    if (hadController) document.getElementById('updToast').classList.add('show');
+    hadController = true;
+  });
+}
+
+function updateApp() {
+  var btn = document.getElementById('updBtn');
+  var tx = document.getElementById('updTx');
+  if (!swReg) { location.reload(); return; }
+  updClicked = true;
+  btn.disabled = true;
+  tx.textContent = 'Проверяю...';
+  swReg.update().then(function() {
+    if (swReg.installing || swReg.waiting) {
+      tx.textContent = 'Загружаю обновление...';
+      if (swReg.waiting) swReg.waiting.postMessage('SKIP_WAITING');
+      // Страница перезагрузится сама, когда новая версия будет готова
+      setTimeout(function() { location.reload(); }, 15000);
+    } else {
+      updClicked = false;
+      btn.disabled = false;
+      tx.textContent = 'Обновить приложение';
+      alert('У вас последняя версия ✅');
+    }
+  }).catch(function() {
+    updClicked = false;
+    btn.disabled = false;
+    tx.textContent = 'Обновить приложение';
+    alert('Нет интернета. Попробуйте позже.');
   });
 }
 </script>
