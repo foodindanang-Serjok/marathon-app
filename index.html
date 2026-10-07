@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Утро Миллионера">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #F3EEE4; --bg-2: #EAE3D6; --card: #FFFDF8; --line: rgba(40,30,10,.10);
@@ -32,7 +32,7 @@
 [hidden] { display: none !important; }
 body {
   background: var(--bg); color: var(--text);
-  font-family: 'Montserrat', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Onest', -apple-system, 'Segoe UI', Roboto, sans-serif;
   font-size: 15px; line-height: 1.5; min-height: 100vh;
   -webkit-tap-highlight-color: transparent;
 }
@@ -46,18 +46,18 @@ button { cursor: pointer; background: none; border: none; }
 
 /* ===== Шапка ===== */
 .today { padding: 28px 0 22px; }
-.today-day { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 44px; line-height: 1.02; }
-.today-day small { display: block; font-weight: 400; font-style: italic; font-size: 26px; color: var(--gold); }
+.today-day { font-family: 'Old Standard TT', 'Times New Roman', serif; font-weight: 400; font-size: 40px; line-height: 1.05; letter-spacing: -.01em; }
+.today-day small { display: block; font-weight: 400; font-style: italic; font-size: 22px; color: var(--gold); margin-top: 4px; }
 .today-hello { margin-top: 10px; color: var(--dim); font-size: 14px; }
-.h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 1.1; padding: 28px 0 6px; }
-.h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 24px; padding: 28px 0 8px; }
+.h2 { font-family: 'Old Standard TT', 'Times New Roman', serif; font-weight: 400; font-size: 28px; line-height: 1.1; padding: 28px 0 6px; }
+.h3 { font-family: 'Old Standard TT', 'Times New Roman', serif; font-weight: 400; font-size: 21px; padding: 28px 0 8px; }
 .sub { color: var(--dim); font-size: 14px; margin-bottom: 18px; }
 
 /* ===== Задачи ===== */
 .add { display: flex; gap: 10px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 6px 6px 6px 16px; }
 .add input { flex: 1; min-width: 0; background: none; border: none; outline: none; font-size: 16px; padding: 10px 0; }
 .add input::placeholder { color: var(--muted); }
-.add button { width: 44px; height: 44px; border-radius: 12px; background: var(--gold); color: var(--on-gold); font-size: 24px; line-height: 1; flex-shrink: 0; }
+.add button { width: 44px; height: 44px; border-radius: 12px; background: var(--gold); color: var(--on-gold); font-size: 30px; font-weight: 400; line-height: 1; flex-shrink: 0; }
 .tasks { list-style: none; margin-top: 14px; }
 .task { display: flex; align-items: center; gap: 14px; padding: 14px 4px; border-bottom: 1px solid var(--line); }
 .check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--gold); flex-shrink: 0; display: grid; place-items: center; color: var(--on-gold); font-size: 14px; transition: background .2s; }
@@ -72,7 +72,7 @@ button { cursor: pointer; background: none; border: none; }
 
 /* ===== Дневник ===== */
 .entry { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
-.entry-date { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 600; }
+.entry-date { font-family: 'Old Standard TT', 'Times New Roman', serif; font-size: 19px; font-weight: 400; }
 .entry textarea { width: 100%; min-height: 170px; margin-top: 10px; resize: vertical; background: none; border: none; outline: none; font-size: 16px; line-height: 1.7; }
 .entry textarea::placeholder { color: var(--muted); }
 .entry-foot { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 6px; }
@@ -105,14 +105,14 @@ button { cursor: pointer; background: none; border: none; }
 .aff { display: flex; gap: 12px; align-items: flex-start; padding: 14px 4px; border-bottom: 1px solid var(--line); }
 .aff-play { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold); flex-shrink: 0; display: grid; place-items: center; font-size: 13px; }
 .aff.speaking .aff-play { background: var(--gold); color: var(--on-gold); }
-.aff-text { flex: 1; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; line-height: 1.35; padding-top: 4px; }
+.aff-text { flex: 1; font-family: 'Old Standard TT', 'Times New Roman', serif; font-style: italic; font-size: 18px; line-height: 1.4; padding-top: 4px; }
 .aff.speaking .aff-text { color: var(--gold); }
 
 /* ===== Я ===== */
 .gate { background: var(--gold-soft); border-radius: 16px; padding: 14px 16px; font-size: 14px; margin-top: 4px; }
 .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 4px; }
 .stat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 12px; }
-.stat b { display: block; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; line-height: 1; color: var(--gold); }
+.stat b { display: block; font-family: 'Old Standard TT', 'Times New Roman', serif; font-weight: 400; font-size: 28px; line-height: 1; color: var(--gold); }
 .stat span { font-size: 12px; color: var(--dim); }
 .me-field { margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 16px 12px; }
 .me-field.err { border-color: var(--danger); }
@@ -137,7 +137,7 @@ button { cursor: pointer; background: none; border: none; }
 /* ===== Окно Telegram ===== */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 40; display: flex; align-items: center; justify-content: center; padding: 24px; }
 .sheet { background: var(--card); border-radius: 22px; padding: 26px; max-width: 380px; width: 100%; text-align: center; }
-.sheet h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; margin: 8px 0 10px; }
+.sheet h3 { font-family: 'Old Standard TT', 'Times New Roman', serif; font-weight: 400; font-size: 22px; margin: 8px 0 10px; }
 .sheet p { color: var(--dim); font-size: 14px; line-height: 1.7; }
 
 /* ===== Нижнее меню ===== */
@@ -272,7 +272,7 @@ button { cursor: pointer; background: none; border: none; }
 
 <script src="app.js"></script>
 <script>
-var APP_VERSION = '13';
+var APP_VERSION = '14';
 (function () {
   try {
     var prev = localStorage.getItem('appVersion');
