@@ -60,6 +60,7 @@ function profileOk() { return !!(profile.name && profile.phone); }
 function showScreen(name) {
   document.querySelectorAll('.nav button').forEach(function (x) { x.classList.toggle('on', x.dataset.s === name); });
   document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('on', s.id === 's-' + name); });
+  document.documentElement.setAttribute('data-screen', name);
   window.scrollTo(0, 0);
   if (name === 'diary') renderDiary();
   if (name === 'me') loadProfile();
@@ -451,4 +452,4 @@ function openTelegramBot() {
 setTheme(load('theme2', localStorage.getItem('theme') || 'dark'));
 renderTasks();
 renderAffs();
-if (!profileOk()) showScreen('me');
+showScreen(profileOk() ? 'tasks' : 'me');
