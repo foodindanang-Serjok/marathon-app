@@ -21,19 +21,21 @@
   --bg: #F3EEE4; --bg-2: #EAE3D6; --card: #FFFDF8; --line: rgba(40,30,10,.10);
   --text: #1C160C; --dim: rgba(28,22,12,.72); --muted: rgba(28,22,12,.48);
   --gold: #A9801F; --gold-soft: rgba(169,128,31,.14); --on-gold: #FFFDF8; --danger: #B4442F;
-  --t-bg: linear-gradient(140deg, #F7E6B8, #EFD391); --t-fg: #5E3F05; --t-sub: rgba(94,63,5,.75);
-  --d-bg: linear-gradient(140deg, #F7DCE4, #EEC2D0); --d-fg: #7A1E3C; --d-sub: rgba(122,30,60,.72);
-  --p-bg: linear-gradient(140deg, #D6F1EA, #B9E3D8); --p-fg: #0D5446; --p-sub: rgba(13,84,70,.72);
-  --m-bg: linear-gradient(140deg, #E0E5FC, #C8D1F6); --m-fg: #28378A; --m-sub: rgba(40,55,138,.72);
+  --on-ac: #FFFDF8;
+  --t-bg: linear-gradient(145deg, #F9E7B5 0%, #EFD28A 60%, #E8C46E 100%); --t-fg: #5A3B04; --t-sub: rgba(90,59,4,.72); --t-soft: rgba(169,128,31,.16); --t-tint: rgba(169,128,31,.10);
+  --d-bg: linear-gradient(145deg, #F8DCE4 0%, #EEBFCF 60%, #E6ADC1 100%); --d-fg: #731B39; --d-sub: rgba(115,27,57,.72); --d-soft: rgba(150,40,80,.14); --d-tint: rgba(150,40,80,.09);
+  --p-bg: linear-gradient(145deg, #D4F0E8 0%, #B4E0D3 60%, #9FD6C7 100%); --p-fg: #0B4F42; --p-sub: rgba(11,79,66,.72); --p-soft: rgba(20,110,92,.15); --p-tint: rgba(20,110,92,.09);
+  --m-bg: linear-gradient(145deg, #E0E5FC 0%, #C6CFF6 60%, #B5C0F2 100%); --m-fg: #253384; --m-sub: rgba(37,51,132,.72); --m-soft: rgba(60,80,180,.14); --m-tint: rgba(60,80,180,.09);
 }
 :root[data-theme="dark"] {
   --bg: #0B0B10; --bg-2: #13131A; --card: #1A1A23; --line: rgba(255,255,255,.08);
   --text: #F6F1E7; --dim: rgba(246,241,231,.78); --muted: rgba(246,241,231,.50);
   --gold: #D4B25E; --gold-soft: rgba(212,178,94,.14); --on-gold: #0B0B10; --danger: #E07A66;
-  --t-bg: linear-gradient(140deg, #3D2D0D, #1F1708); --t-fg: #F4D27A; --t-sub: rgba(244,210,122,.72);
-  --d-bg: linear-gradient(140deg, #401A2B, #220E17); --d-fg: #F5A9BE; --d-sub: rgba(245,169,190,.72);
-  --p-bg: linear-gradient(140deg, #113A35, #0A201D); --p-fg: #8FE3D1; --p-sub: rgba(143,227,209,.72);
-  --m-bg: linear-gradient(140deg, #1E2650, #10142C); --m-fg: #AFBDFF; --m-sub: rgba(175,189,255,.72);
+  --on-ac: #0B0B10;
+  --t-bg: linear-gradient(145deg, #5A4214 0%, #3A2A0D 55%, #231A08 100%); --t-fg: #F6D67E; --t-sub: rgba(246,214,126,.74); --t-soft: rgba(246,214,126,.16); --t-tint: rgba(246,214,126,.09);
+  --d-bg: linear-gradient(145deg, #5C2340 0%, #3C1629 55%, #24101A 100%); --d-fg: #F7B3C6; --d-sub: rgba(247,179,198,.74); --d-soft: rgba(247,179,198,.16); --d-tint: rgba(247,179,198,.08);
+  --p-bg: linear-gradient(145deg, #175A50 0%, #0F3A34 55%, #0A2420 100%); --p-fg: #93E8D6; --p-sub: rgba(147,232,214,.74); --p-soft: rgba(147,232,214,.16); --p-tint: rgba(147,232,214,.08);
+  --m-bg: linear-gradient(145deg, #2E3A78 0%, #1D2550 55%, #12172F 100%); --m-fg: #B6C3FF; --m-sub: rgba(182,195,255,.74); --m-soft: rgba(182,195,255,.16); --m-tint: rgba(182,195,255,.08);
 }
 :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); }
 *, *::before, *::after { box-sizing: inherit; margin: 0; padding: 0; }
@@ -143,16 +145,57 @@ button { cursor: pointer; background: none; border: none; }
 .row-btn span:last-child { color: var(--muted); }
 
 
-/* ===== Цветные шапки разделов ===== */
-.hero { margin: 14px 0 18px; padding: 24px 20px 20px; border-radius: 24px; background: var(--hb); color: var(--hf); }
+/* ===== Цвет раздела ===== */
+#s-tasks    { --hb: var(--t-bg); --hf: var(--t-fg); --hs: var(--t-sub); --hsoft: var(--t-soft); }
+#s-diary    { --hb: var(--d-bg); --hf: var(--d-fg); --hs: var(--d-sub); --hsoft: var(--d-soft); }
+#s-practice { --hb: var(--p-bg); --hf: var(--p-fg); --hs: var(--p-sub); --hsoft: var(--p-soft); }
+#s-me       { --hb: var(--m-bg); --hf: var(--m-fg); --hs: var(--m-sub); --hsoft: var(--m-soft); }
+
+/* лёгкий оттенок раздела на фоне экрана */
+body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 120% 55% at 50% -10%, var(--tint, transparent) 0%, transparent 70%); transition: background .4s; }
+:root[data-screen="tasks"]    { --tint: var(--t-tint); }
+:root[data-screen="diary"]    { --tint: var(--d-tint); }
+:root[data-screen="practice"] { --tint: var(--p-tint); }
+:root[data-screen="me"]       { --tint: var(--m-tint); }
+.app { position: relative; z-index: 1; }
+
+/* шапка */
+.hero { position: relative; overflow: hidden; margin: 14px 0 18px; padding: 24px 20px 20px; border-radius: 24px; background: var(--hb); color: var(--hf); box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 10px 30px -18px rgba(0,0,0,.6); }
+.hero::after { content: ''; position: absolute; right: -40px; top: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.14), transparent 65%); pointer-events: none; }
 .hero .h2, .hero .today-day { color: var(--hf); padding: 0; }
 .hero .sub, .hero .today-hello { color: var(--hs); margin: 8px 0 0; }
 .hero .today-day small { color: var(--hs); }
-#s-tasks    { --hb: var(--t-bg); --hf: var(--t-fg); --hs: var(--t-sub); }
-#s-diary    { --hb: var(--d-bg); --hf: var(--d-fg); --hs: var(--d-sub); }
-#s-practice { --hb: var(--p-bg); --hf: var(--p-fg); --hs: var(--p-sub); }
-#s-me       { --hb: var(--m-bg); --hf: var(--m-fg); --hs: var(--m-sub); }
 .screen .h3 { color: var(--hf); }
+
+/* акцент раздела в элементах */
+.screen .add { border-color: var(--hsoft); }
+.screen .add button { background: var(--hf); color: var(--on-ac); }
+.screen .check { border-color: var(--hf); color: var(--on-ac); }
+.screen .task.done .check { background: var(--hf); }
+.screen .done-toggle { color: var(--hs); }
+.screen .prompt { background: var(--hsoft); color: var(--hf); }
+.screen .entry { border-color: var(--hsoft); }
+.screen .entry-date { color: var(--hf); }
+.screen .arch-date { color: var(--hf); }
+.screen .search:focus { border-color: var(--hf); }
+.screen .med { border-color: var(--hsoft); background: linear-gradient(135deg, var(--hsoft), var(--card) 60%); }
+.screen .med-play { background: var(--hf); color: var(--on-ac); }
+.screen .med-fill { background: var(--hf); }
+.screen .aff-add textarea:focus { border-color: var(--hf); }
+.screen .aff-add button { background: var(--hf); color: var(--on-ac); }
+.screen .aff-all { color: var(--hf); }
+.screen .aff-play { border-color: var(--hf); color: var(--hf); }
+.screen .aff.speaking .aff-play { background: var(--hf); color: var(--on-ac); }
+.screen .aff.speaking .aff-text { color: var(--hf); }
+.screen .stat { border-color: var(--hsoft); background: linear-gradient(160deg, var(--hsoft), var(--card) 70%); }
+.screen .stat b { color: var(--hf); }
+.screen .gate { background: var(--hsoft); color: var(--hf); }
+.screen .btn-gold { background: var(--hf); color: var(--on-ac); }
+.screen .me-field:focus-within { border-color: var(--hf); }
+.screen .cc-wrap { border-color: var(--hsoft); }
+.screen :focus-visible { outline-color: var(--hf); }
+
+/* нижнее меню */
 .nav button[data-s="tasks"].on    { color: var(--t-fg); }
 .nav button[data-s="diary"].on    { color: var(--d-fg); }
 .nav button[data-s="practice"].on { color: var(--p-fg); }
@@ -297,7 +340,7 @@ button { cursor: pointer; background: none; border: none; }
 
 <script src="app.js"></script>
 <script>
-var APP_VERSION = '15';
+var APP_VERSION = '16';
 (function () {
   try {
     var prev = localStorage.getItem('appVersion');
