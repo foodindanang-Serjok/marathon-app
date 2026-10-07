@@ -272,9 +272,26 @@ button { cursor: pointer; background: none; border: none; }
 
 <script src="app.js"></script>
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () { navigator.serviceWorker.register('./sw.js'); });
-}
+var APP_VERSION = '13';
+(function () {
+  try {
+    var prev = localStorage.getItem('appVersion');
+    if (prev && prev !== APP_VERSION) setTimeout(function () { toast('✨ Приложение обновлено'); }, 500);
+    localStorage.setItem('appVersion', APP_VERSION);
+  } catch (e) {}
+  if (!('serviceWorker' in navigator)) return;
+  var hadSW = !!navigator.serviceWorker.controller, reloaded = false, reg = null;
+  function refresh() { if (!hadSW || reloaded) return; reloaded = true; window.location.reload(); }
+  function watch(w) { if (w) w.addEventListener('statechange', function () { if (w.state === 'activated') refresh(); }); }
+  navigator.serviceWorker.addEventListener('controllerchange', refresh);
+  navigator.serviceWorker.register('./sw.js').then(function (r) {
+    reg = r;
+    watch(r.installing); watch(r.waiting);
+    r.addEventListener('updatefound', function () { watch(r.installing); });
+    r.update();
+  });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && reg) reg.update(); });
+})();
 </script>
 </body>
 </html>
