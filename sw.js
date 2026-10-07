@@ -1,4 +1,4 @@
-var CACHE = "marathon-v12";
+var CACHE = "marathon-v13";
 var FILES = [
   "./",
   "./index.html",
@@ -13,7 +13,7 @@ var FILES = [
 self.addEventListener("install", function(e) {
   e.waitUntil(
     caches.open(CACHE).then(function(cache) {
-      return cache.addAll(FILES);
+      return cache.addAll(FILES.map(function (f) { return new Request(f, {cache: 'reload'}); }));
     })
   );
   self.skipWaiting();
