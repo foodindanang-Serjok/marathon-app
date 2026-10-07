@@ -1,641 +1,252 @@
-/* ========== ДАННЫЕ ========== */
-var DAYS = [
-{ num:1, name:"Точка решения", sub:"Цель: первое ДА Я МОГУ", emoji:"🌱",
-morning:[{type:"audio",title:"Медитация",dur:""}],
-day:[{type:"reminder",text:"🔔 Ты уже отличаешься от 95% людей"}],
-evening:[{type:"journal",q:"Главное действие за сегодня:"},{type:"journal",q:"Где победил себя?"}]
-},
-{ num:2, name:"Первая победа", sub:"Цель: система работает", emoji:"⚡",
-morning:[{type:"audio",title:"Медитация: Уверенность",dur:"7 мин"},{type:"task",text:"Аффирмации своим голосом -- запиши на телефон"}],
-day:[{type:"reminder",text:"🔥 2 дня подряд! Система работает"}],
-evening:[{type:"journal",q:"3 победы за сегодня:"},{type:"journal",q:"1 ошибка (без самобичевания):"}]
-},
-{ num:3, name:"Сопротивление", sub:"Ключевой день -- большинство сливается", emoji:"💪",
-morning:[{type:"audio",title:"Медитация: Дисциплина",dur:"10 мин"},{type:"task",text:"Аффирмации"}],
-day:[{type:"reminder",text:"💡 Сегодня будет сложно. Это нормально. Ты растёшь."}],
-evening:[{type:"journal",q:"Где хотел слиться сегодня?"},{type:"journal",q:"Почему НЕ слился?"}]
-},
-{ num:4, name:"Перелом", sub:"Цель: ощущение новой личности", emoji:"🦋",
-morning:[{type:"audio",title:"Медитация: Новая версия тебя",dur:"10 мин"},{type:"task",text:"Аффирмации с усилением эмоции"}],
-day:[{type:"reminder",text:"🏆 Новый уровень: ты уже не новичок"}],
-evening:[{type:"journal",q:"Кем я был сегодня?"}]
-},
-{ num:5, name:"Азарт", sub:"Цель: включить игру", emoji:"🎯",
-morning:[{type:"audio",title:"Медитация: Энергия победителя",dur:"10 мин"},{type:"task",text:"Аффирмации"}],
-day:[{type:"reminder",text:"🚀 Ты уже впереди большинства"}],
-evening:[{type:"journal",q:"Лучший момент сегодняшнего дня:"}]
-},
-{ num:6, name:"Усиление", sub:"Цель: привычка как норма", emoji:"🔑",
-morning:[{type:"audio",title:"Медитация: Глубина",dur:"10 мин"},{type:"task",text:"Аффирмации -- уже на автомате"}],
-day:[{type:"reminder",text:"✨ Теперь ты человек, который делает"}],
-evening:[{type:"journal",q:"1 результат, который раньше был невозможен:"}]
-},
-{ num:7, name:"Новая точка отсчёта", sub:"Цель: зафиксировать трансформацию", emoji:"🌟",
-morning:[{type:"audio",title:"Медитация: Ты изменился",dur:"12 мин"},{type:"task",text:"Аффирмации"}],
-day:[{type:"reminder",text:"📊 Твои итоги 7 дней готовы"}],
-evening:[{type:"journal",q:"Кем я был 7 дней назад?"},{type:"journal",q:"Кто я сейчас?"}]
-}
-];
+/* ========== ХРАНИЛИЩЕ ========== */
+function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function dayKey(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
 
-/* ========== СОСТОЯНИЕ ========== */
-var doneDays = JSON.parse(localStorage.getItem('doneDays') || '[]');
-var tasks    = JSON.parse(localStorage.getItem('tasks')    || '{}');
-var dayTasks = JSON.parse(localStorage.getItem('dayTasks') || '{}');
-var journals = JSON.parse(localStorage.getItem('journals') || '{}');
-var curDay   = parseInt(localStorage.getItem('curDay') || '1');
-var openNum  = 1;
-
-/* ========== ГЛАВНЫЙ ЭКРАН ========== */
-function renderMain() {
-document.getElementById('sNum').textContent = doneDays.length || 1;
-var g = document.getElementById('dGrid');
-g.innerHTML = '';
-DAYS.forEach(function(d) {
-var done   = doneDays.indexOf(d.num) >= 0;
-var active = d.num === curDay;
-var locked = d.num > curDay;
-var sc = locked ? 'locked' : done ? 'completed' : active ? 'active' : '';
-var bc = done ? 'done' : active ? 'cur' : 'fut';
-var bi = done ? '✓' : d.emoji;
-var dk = 'day' + d.num;
-var td = tasks[dk] || [];
-var dots = [0,1,2].map(function(i) {
-return '<div class="dot' + (td.indexOf(i) >= 0 ? ' on' : '') + '"></div>';
-}).join('');
-var right = active
-? '<span class="abadge">Сегодня</span>'
-: locked
-? '<span class="lock-ic">🔒</span>'
-: '<div class="dprog">' + dots + '</div>';
-var cl = locked ? '' : 'onclick="openDay(' + d.num + ')"';
-g.innerHTML += '<div class="day-card ' + sc + '" ' + cl + '>' +
-'<div class="dbadge ' + bc + '">' + bi + '</div>' +
-'<div class="dinfo">' +
-'<div class="dname">День ' + d.num + ' -- ' + d.name + '</div>' +
-'<div class="dsub">' + d.sub + '</div>' +
-'</div>' +
-right +
-'</div>';
-});
+var WD = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'];
+var MN = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+function humanDay(k) {
+  if (k === 'marathon') return 'Записи марафона «7 дней»';
+  var p = k.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]);
+  return d.getDate() + ' ' + MN[d.getMonth()] + ', ' + WD[d.getDay()];
 }
 
-/* ========== ДЕТАЛЬНЫЙ ЭКРАН ========== */
-function openDay(n) {
-  // Блокировка без профиля
-  if (!profile.name || !profile.phone) {
-    toast('👤 Сначала заполните профиль');
-    setTimeout(function() { navTo('me'); }, 800);
-    return;
-  }
-var d = DAYS[n - 1];
-openNum = n;
-document.getElementById('pLbl').textContent   = 'ДЕНЬ ' + d.num;
-document.getElementById('pTitle').textContent = d.name;
-document.getElementById('pSub').textContent   = d.sub;
-var h = '';
-h += '<div class="tseg"><div class="slbl">🌅 Утро — прослушай медитацию 10 минут</div>' + items(d.morning, n, 'm') + '</div>';
-h += renderDayTask(n);
-if (d.day && d.day.length) {
-h += '<div class="tseg"><div class="slbl">☀️ День</div>' + items(d.day, n, 'dy') + '</div>';
-}
-h += '<div class="tseg"><div class="slbl">🌙 Вечер -- Дневник успеха</div>' + items(d.evening, n, 'e') + '</div>';
-if (n === 7) h += day7block();
-document.getElementById('pBody').innerHTML = h;
-var cta = document.getElementById('pCta');
-if (doneDays.indexOf(n) >= 0) {
-cta.textContent = '✓ День завершён';
-cta.style.background = 'rgba(201,168,76,.2)';
-cta.style.color = 'var(--gold-light)';
-} else {
-cta.textContent = 'Завершить день ✓';
-cta.style.background = 'var(--gold)';
-cta.style.color = 'var(--dark)';
-}
-document.getElementById('dayPanel').classList.add('open');
+var toastT;
+function toast(m) {
+  var t = $('toast'); t.textContent = m; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('show'); }, 2000);
 }
 
-function items(arr, dn, sec) {
-return arr.map(function(it, i) {
-if (it.type === 'audio') {
-      return '<div class="ablock">' +
-        '<audio controls style="width:100%;margin-top:10px;border-radius:8px;" src="meditation.m4a" ontimeupdate="checkMedStop(this)">' +
-          'Ваш браузер не поддерживает аудио.' +
-        '</audio>' +
-      '</div>';
-    }
-    if (it.type === 'task') {
-var k  = dn + '_' + sec + '_' + i;
-var dk = tasks['day' + dn] || [];
-var dne = dk.indexOf(k) >= 0;
-return '<div class="ti' + (dne ? ' done' : '') + '" id="ti_' + k + '" onclick="tapTask(\'' + k + '\',' + dn + ')">' +
-'<div class="tck">' + (dne ? '✓' : '') + '</div>' +
-'<div class="ttxt">' + it.text + '</div>' +
-'</div>';
-}
-if (it.type === 'reminder') {
-return '<div style="background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--gold-light);font-style:italic;margin-bottom:8px;">' + it.text + '</div>';
-}
-if (it.type === 'journal') {
-var jk  = 'j_' + dn + '_' + sec + '_' + i;
-var jval = journals[jk] || '';
-return '<div class="jblock">' +
-'<div class="jq">' + it.q + '</div>' +
-'<textarea class="jinput" id="' + jk + '" placeholder="Напиши здесь…" rows="3"' +
-' oninput="saveJournal(this)">' + esc(jval) + '</textarea>' +
-'</div>';
-}
-return '';
-}).join('');
-}
+var profile = load('profile', {});
 
-function renderDayTask(n) {
-var dt    = dayTasks[n] || { items: [] };
-var items = dt.items || [];
-var allDone = items.length > 0 && items.every(function(it) { return it.done; });
+/* ========== ПЕРЕНОС ДАННЫХ ИЗ СТАРОЙ ВЕРСИИ ========== */
+(function migrate() {
+  if (load('v2migrated', false)) return;
+  var todo = load('todo', []);
+  var dayTasks = load('dayTasks', {});
+  Object.keys(dayTasks).forEach(function (n) {
+    var items = dayTasks[n] && dayTasks[n].items;
+    if (items) items.forEach(function (it) { if (it && it.text) todo.push({id: newId(), text: it.text, done: !!it.done}); });
+  });
+  save('todo', todo);
 
-var itemsHtml = items.map(function(it, i) {
-return '<div class="dt-item' + (it.done ? ' dt-item-done' : '') + '" id="dti_' + n + '_' + i + '">' +
-'<div class="dt-check" onclick="toggleDayTask(' + n + ',' + i + ')">' +
-(it.done ? '✓' : '') +
-'</div>' +
-'<div class="dt-item-text">' + esc(it.text) + '</div>' +
-'<div class="dt-item-del" onclick="deleteDayTask(' + n + ',' + i + ')">✕</div>' +
-'</div>';
-}).join('');
+  var journals = load('journals', {}), diary = load('diary', {}), lines = [];
+  Object.keys(journals).sort().forEach(function (k) {
+    var v = String(journals[k] || '').trim();
+    var day = (k.match(/^j_(\d+)_/) || [])[1];
+    if (v) lines.push((day ? 'День ' + day + ': ' : '') + v);
+  });
+  if (lines.length && !diary.marathon) diary.marathon = lines.join('\n\n');
+  save('diary', diary);
+  save('v2migrated', true);
+})();
 
-return '<div class="tseg">' +
-'<div class="slbl">🎯 Задачи на день</div>' +
-'<div class="dtblock" id="dtblock_' + n + '">' +
-'<div class="dt-header">' +
-'<div class="dt-icon">🎯</div>' +
-'<div class="dt-label">Запиши свои задачи на сегодня</div>' +
-'</div>' +
-'<div id="dtItems_' + n + '">' + itemsHtml + '</div>' +
-'<div style="display:flex;gap:8px;margin-top:10px;">' +
-'<input class="dt-textarea" id="dtInput_' + n + '" type="text"' +
-' placeholder="Добавить задачу…" style="flex:1;min-height:auto;padding:10px 14px;resize:none;">' +
-'<button onclick="addDayTask(' + n + ')" style="background:var(--gold);color:var(--dark);border:none;border-radius:10px;padding:10px 16px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">+ Добавить</button>' +
-'</div>' +
-'</div>' +
-'</div>';
+/* ========== ТЕМА ========== */
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  save('theme2', t);
+  var m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.setAttribute('content', t === 'dark' ? '#0B0B10' : '#F3EEE4');
+  $('themeVal').textContent = t === 'dark' ? 'Тёмная' : 'Светлая';
 }
-
-function addDayTask(n) {
-var inp  = document.getElementById('dtInput_' + n);
-var text = inp ? inp.value.trim() : '';
-if (!text) {
-if (inp) {
-inp.style.borderColor = 'rgba(224,92,92,.5)';
-setTimeout(function() { inp.style.borderColor = ''; }, 1500);
-}
-return;
-}
-if (!dayTasks[n]) dayTasks[n] = { items: [] };
-if (!dayTasks[n].items) dayTasks[n].items = [];
-dayTasks[n].items.push({ text: text, done: false });
-localStorage.setItem('dayTasks', JSON.stringify(dayTasks));
-inp.value = '';
-// Перерисовываем список задач
-var cont = document.getElementById('dtItems_' + n);
-if (cont) {
-cont.innerHTML = dayTasks[n].items.map(function(it, i) {
-return '<div class="dt-item' + (it.done ? ' dt-item-done' : '') + '" id="dti_' + n + '_' + i + '">' +
-'<div class="dt-check" onclick="toggleDayTask(' + n + ',' + i + ')">' + (it.done ? '✓' : '') + '</div>' +
-'<div class="dt-item-text">' + esc(it.text) + '</div>' +
-'<div class="dt-item-del" onclick="deleteDayTask(' + n + ',' + i + ')">✕</div>' +
-'</div>';
-}).join('');
-}
-toast('✅ Задача добавлена!');
-renderMain();
-}
-
-function toggleDayTask(n, i) {
-if (!dayTasks[n] || !dayTasks[n].items) return;
-dayTasks[n].items[i].done = !dayTasks[n].items[i].done;
-localStorage.setItem('dayTasks', JSON.stringify(dayTasks));
-var el = document.getElementById('dti_' + n + '_' + i);
-if (el) {
-var done = dayTasks[n].items[i].done;
-el.className = 'dt-item' + (done ? ' dt-item-done' : '');
-el.querySelector('.dt-check').textContent = done ? '✓' : '';
-}
-renderMain();
-if (dayTasks[n].items[i].done) toast('🎯 Задача выполнена!');
-}
-
-function deleteDayTask(n, i) {
-if (!dayTasks[n] || !dayTasks[n].items) return;
-dayTasks[n].items.splice(i, 1);
-localStorage.setItem('dayTasks', JSON.stringify(dayTasks));
-var cont = document.getElementById('dtItems_' + n);
-if (cont) {
-cont.innerHTML = dayTasks[n].items.map(function(it, idx) {
-return '<div class="dt-item' + (it.done ? ' dt-item-done' : '') + '" id="dti_' + n + '_' + idx + '">' +
-'<div class="dt-check" onclick="toggleDayTask(' + n + ',' + idx + ')">' + (it.done ? '✓' : '') + '</div>' +
-'<div class="dt-item-text">' + esc(it.text) + '</div>' +
-'<div class="dt-item-del" onclick="deleteDayTask(' + n + ',' + idx + ')">✕</div>' +
-'</div>';
-}).join('');
-}
-renderMain();
-}
-
-function day7block() {
-return '<div style="margin-top:28px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(139,111,212,.08));border:1px solid rgba(201,168,76,.25);border-radius:18px;padding:24px;text-align:center;">' +
-'<div style="font-size:32px;margin-bottom:12px;">🏆</div>' +
-'<div style="font-family:Cormorant Garamond,serif;font-size:20px;line-height:1.4;margin-bottom:16px;color:var(--gold-light)">Ты доказал себе, что можешь.</div>' +
-'<button onclick="toast(\'🚀 Продолжай!\')" style="background:var(--gold);color:var(--dark);border:none;border-radius:12px;padding:14px 28px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Продолжить 30 дней →</button>' +
-'</div>';
-}
-
-function tapTask(k, dn) {
-var dk = 'day' + dn;
-if (!tasks[dk]) tasks[dk] = [];
-var idx = tasks[dk].indexOf(k);
-if (idx < 0) tasks[dk].push(k); else tasks[dk].splice(idx, 1);
-localStorage.setItem('tasks', JSON.stringify(tasks));
-var el = document.getElementById('ti_' + k);
-if (el) {
-el.classList.toggle('done');
-el.querySelector('.tck').textContent = el.classList.contains('done') ? '✓' : '';
-}
-renderMain();
-}
-
-function completeDay() {
-var n = openNum;
-
-// Проверяем заполнен ли профиль
-if (!profile.name || !profile.email || !profile.pointA || !profile.pointB) {
-toast('👤 Заполните профиль для сохранения данных');
-setTimeout(function() {
-closeDayPanel();
-navTo('me');
-}, 1500);
-return;
-}
-
-if (doneDays.indexOf(n) < 0) {
-doneDays.push(n);
-localStorage.setItem('doneDays', JSON.stringify(doneDays));
-if (n === curDay && curDay < 7) {
-curDay = n + 1;
-localStorage.setItem('curDay', curDay);
-}
-}
-renderMain();
-var cta = document.getElementById('pCta');
-cta.textContent = '✓ День завершён';
-cta.style.background = 'rgba(201,168,76,.2)';
-cta.style.color = 'var(--gold-light)';
-toast('🔥 День ' + n + ' завершён!');
-setTimeout(closeDayPanel, 1200);
-}
-
-function closeDayPanel() {
-document.getElementById('dayPanel').classList.remove('open');
-}
+$('themeRow').onclick = function () { setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); };
 
 /* ========== НАВИГАЦИЯ ========== */
-function navTo(tab) {
-document.querySelectorAll('.ni').forEach(function(n) { n.classList.remove('on'); });
-var el = document.getElementById('ni-' + tab);
-if (el) el.classList.add('on');
-var asc = document.getElementById('affScr');
-var psc = document.getElementById('progScr');
-var msc = document.getElementById('meScr');
-ttsHalt();
-asc.classList.remove('open');
-psc.classList.remove('open');
-msc.classList.remove('open');
-if (tab === 'affirm') {
-asc.classList.add('open');
-loadVoices();
-} else if (tab === 'prog') {
-psc.classList.add('open');
-renderProgress();
-} else if (tab === 'me') {
-msc.classList.add('open');
-loadProfile();
-}
+function profileOk() { return !!(profile.name && profile.phone); }
+
+function showScreen(name) {
+  document.querySelectorAll('.nav button').forEach(function (x) { x.classList.toggle('on', x.dataset.s === name); });
+  document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('on', s.id === 's-' + name); });
+  window.scrollTo(0, 0);
+  if (name === 'diary') renderDiary();
+  if (name === 'me') loadProfile();
 }
 
-/* ========== ПРОГРЕСС ========== */
-function renderProgress() {
-var totalDays = 7;
-var doneCount = doneDays.length;
-var pct       = Math.round(doneCount / totalDays * 100);
-
-// Считаем выполненные задачи дня (новая структура items[])
-var dtDone    = 0;
-var dtTotal   = 0;
-for (var i = 1; i <= 7; i++) {
-if (dayTasks[i] && dayTasks[i].items) {
-dayTasks[i].items.forEach(function(it) {
-dtTotal++;
-if (it.done) dtDone++;
-});
-}
-}
-
-// Считаем чекбоксы (аффирмации утра и задачи)
-var checksDone = 0;
-Object.keys(tasks).forEach(function(dk) { checksDone += tasks[dk].length; });
-
-// Считаем записи дневника
-var journalDone = 0;
-Object.keys(journals).forEach(function(jk) {
-if (journals[jk] && journals[jk].trim().length > 0) journalDone++;
+document.querySelectorAll('.nav button').forEach(function (b) {
+  b.onclick = function () {
+    if (b.dataset.s !== 'me' && !profileOk()) { toast('👤 Сначала заполни имя и телефон'); showScreen('me'); return; }
+    showScreen(b.dataset.s);
+  };
 });
 
-// Итого всех действий
-var totalActions = checksDone + dtDone + journalDone;
-var motivArr = [
-{ icon:'🌱', text:'Каждый шаг -- это победа над вчерашней версией себя.' },
-{ icon:'🔥', text:'Ты уже в топ 5% людей, которые вообще начали.' },
-{ icon:'💎', text:'Дисциплина -- это свобода. Ты строишь её прямо сейчас.' },
-{ icon:'🚀', text:'Большие перемены начинаются с маленьких ежедневных решений.' },
-{ icon:'🏆', text:'Ты доказываешь себе каждый день: я человек, который делает.' },
-{ icon:'⚡', text:'Энергия идёт туда, куда направлено внимание. Ты на верном пути.' },
-{ icon:'🌟', text:'7 дней могут изменить всё. Ты уже меняешься.' }
-];
-var motiv = motivArr[Math.min(doneCount, 6)];
-var html = '';
-html += '<div class="stats-row">' +
-'<div class="stat-card gold"><div class="stat-num">' + doneCount + '</div><div class="stat-lbl">Дней<br>пройдено</div></div>' +
-'<div class="stat-card gold"><div class="stat-num">' + dtDone + '</div><div class="stat-lbl">Задач<br>выполнено</div></div>' +
-'<div class="stat-card gold"><div class="stat-num">' + journalDone + '</div><div class="stat-lbl">Записей<br>в дневнике</div></div>' +
-'</div>';
-html += '<div class="stats-row" style="margin-top:10px;">' +
-'<div class="stat-card gold"><div class="stat-num">' + checksDone + '</div><div class="stat-lbl">Аффирмаций<br>выполнено</div></div>' +
-'<div class="stat-card gold"><div class="stat-num">' + totalActions + '</div><div class="stat-lbl">Всего<br>действий</div></div>' +
-'<div class="stat-card gold"><div class="stat-num">' + Math.round(doneCount / totalDays * 100) + '%</div><div class="stat-lbl">Марафон<br>пройден</div></div>' +
-'</div>';
-html += '<div class="prog-block">' +
-'<div class="pb-header"><div class="pb-title">Марафон 7 дней</div><div class="pb-pct">' + pct + '%</div></div>' +
-'<div class="pb-track"><div class="pb-fill" id="pbFill" style="width:0%"></div></div>' +
-'<div class="pb-sub">' + doneCount + ' из ' + totalDays + ' дней завершено</div>' +
-'</div>';
-html += '<div class="prog-block">' +
-'<div class="pb-header"><div class="pb-title">🎯 Задачи на день</div><div class="pb-pct">' + dtDone + ' / ' + dtTotal + '</div></div>' +
-'<div class="pb-track"><div class="pb-fill" id="pbTasks" style="width:0%"></div></div>' +
-'<div class="pb-sub">Выполнено ' + dtDone + ' из ' + dtTotal + ' задач</div>' +
-'</div>';
-html += '<div class="prog-block">' +
-'<div class="pb-header"><div class="pb-title">📓 Дневник успеха</div><div class="pb-pct">' + journalDone + '</div></div>' +
-'<div class="pb-track"><div class="pb-fill" id="pbJournal" style="width:0%"></div></div>' +
-'<div class="pb-sub">Записей сделано: ' + journalDone + '</div>' +
-'</div>';
-html += '<div class="motiv-card"><div class="motiv-icon">' + motiv.icon + '</div><div class="motiv-text">' + motiv.text + '</div></div>';
-html += '<div class="slbl" style="margin-bottom:14px">📋 По дням</div>';
-html += '<div class="prog-days">';
-DAYS.forEach(function(d) {
-var isDone   = doneDays.indexOf(d.num) >= 0;
-var isActive = d.num === curDay && !isDone;
-var isLocked = d.num > curDay;
-var rc = isDone ? 'done-row' : isActive ? 'active-row' : '';
-var bc = isDone ? 'done-b'   : isActive ? 'active-b'   : '';
-var bi = isDone ? '✓' : isActive ? '▶' : d.emoji;
-var dt = dayTasks[d.num];
-var dayItemsDone = 0;
-var dayItemsTotal = 0;
-if (dt && dt.items) {
-dayItemsTotal = dt.items.length;
-dt.items.forEach(function(it) { if (it.done) dayItemsDone++; });
+/* ========== ШАПКА ========== */
+function renderHeader() {
+  var now = new Date();
+  $('todayDay').innerHTML = esc(now.getDate() + ' ' + MN[now.getMonth()]) + '<small>' + WD[now.getDay()] + '</small>';
+  var h = now.getHours();
+  var g = h < 5 ? 'Доброй ночи' : h < 12 ? 'Доброе утро' : h < 18 ? 'Добрый день' : 'Добрый вечер';
+  var open = load('todo', []).filter(function (t) { return !t.done; }).length;
+  $('hello').textContent = g + (profile.name ? ', ' + profile.name : '') + '. ' +
+    (open ? 'Задач на сегодня: ' + open + '.' : 'Все задачи сделаны.');
 }
-var dtStatus = isDone
-? (dayItemsTotal > 0 ? '🎯 ' + dayItemsDone + '/' + dayItemsTotal + ' задач выполнено' : 'день завершён')
-: isActive ? 'сегодняшний день'
-: isLocked ? 'заблокирован' : '';
-var check = isDone ? '✓' : isActive ? '→' : '';
-html += '<div class="prog-day-row ' + rc + '">' +
-'<div class="pdr-badge ' + bc + '">' + bi + '</div>' +
-'<div class="pdr-info">' +
-'<div class="pdr-name">День ' + d.num + ' -- ' + d.name + '</div>' +
-'<div class="pdr-sub">' + dtStatus + '</div>' +
-'</div>' +
-'<div class="pdr-check">' + check + '</div>' +
-'</div>';
+
+/* ========== ЗАДАЧИ ========== */
+var showDone = false;
+
+function taskRow(t) {
+  return '<li class="task' + (t.done ? ' done' : '') + '" data-id="' + t.id + '">' +
+    '<button class="check" data-act="toggle" aria-label="' + (t.done ? 'Вернуть задачу' : 'Отметить выполненной') + '">' + (t.done ? '✓' : '') + '</button>' +
+    '<span class="task-text">' + esc(t.text) + '</span>' +
+    '<button class="task-del" data-act="del" aria-label="Удалить задачу">×</button></li>';
+}
+
+function renderTasks() {
+  var all = load('todo', []);
+  var open = all.filter(function (t) { return !t.done; }), done = all.filter(function (t) { return t.done; });
+  $('taskList').innerHTML = open.length ? open.map(taskRow).join('') :
+    '<li class="empty">Добавь первое дело на сегодня — одно короткое действие.</li>';
+  $('doneToggle').hidden = !done.length;
+  $('doneLbl').textContent = (showDone ? '▾ ' : '▸ ') + 'Выполнено: ' + done.length;
+  $('doneList').hidden = !showDone || !done.length;
+  $('doneList').innerHTML = done.map(taskRow).join('');
+  renderHeader();
+}
+
+$('addTask').onsubmit = function (e) {
+  e.preventDefault();
+  var v = $('taskIn').value.trim();
+  if (!v) return;
+  var all = load('todo', []);
+  all.unshift({id: newId(), text: v, done: false});
+  save('todo', all);
+  $('taskIn').value = '';
+  renderTasks();
+};
+
+function onTaskClick(e) {
+  var b = e.target.closest('button'); if (!b) return;
+  var id = b.closest('.task').dataset.id, all = load('todo', []);
+  if (b.dataset.act === 'toggle') {
+    all.forEach(function (t) {
+      if (t.id === id) { t.done = !t.done; t.doneAt = t.done ? dayKey(new Date()) : null; if (t.done) toast('Готово ✓'); }
+    });
+  } else {
+    all = all.filter(function (t) { return t.id !== id; });
+  }
+  save('todo', all);
+  renderTasks();
+}
+$('taskList').onclick = onTaskClick;
+$('doneList').onclick = onTaskClick;
+$('doneToggle').onclick = function (e) {
+  if (e.target.id === 'doneClear') {
+    save('todo', load('todo', []).filter(function (t) { return !t.done; }));
+    toast('Выполненные очищены');
+  } else {
+    showDone = !showDone;
+  }
+  renderTasks();
+};
+
+/* ========== ДНЕВНИК ========== */
+var PROMPTS = ['Главное действие за сегодня', 'Где победил себя', 'За что благодарен'];
+var saveT;
+function today() { return dayKey(new Date()); }
+
+$('prompts').innerHTML = PROMPTS.map(function (p) { return '<button class="prompt">' + p + '</button>'; }).join('');
+$('prompts').onclick = function (e) {
+  var b = e.target.closest('.prompt'); if (!b) return;
+  var ta = $('entryIn');
+  ta.value = (ta.value ? ta.value.replace(/\s*$/, '') + '\n' : '') + b.textContent + ': ';
+  ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+  saveEntry();
+};
+
+function saveEntry() {
+  var d = load('diary', {}), v = $('entryIn').value;
+  if (v.trim()) d[today()] = v; else delete d[today()];
+  save('diary', d);
+  $('entrySaved').textContent = v.trim() ? 'Сохранено' : '';
+  $('entryCount').textContent = v.trim() ? v.trim().split(/\s+/).length + ' слов' : '';
+}
+$('entryIn').oninput = function () { $('entrySaved').textContent = '…'; clearTimeout(saveT); saveT = setTimeout(saveEntry, 400); };
+
+function renderDiary() {
+  var d = load('diary', {}), t = today();
+  $('entryDate').textContent = 'Сегодня, ' + humanDay(t);
+  if (document.activeElement !== $('entryIn')) $('entryIn').value = d[t] || '';
+  $('entrySaved').textContent = d[t] ? 'Сохранено' : '';
+  $('entryCount').textContent = d[t] ? d[t].trim().split(/\s+/).length + ' слов' : '';
+  var q = $('diarySearch').value.trim().toLowerCase();
+  var keys = Object.keys(d).filter(function (k) { return k !== t && (!q || d[k].toLowerCase().indexOf(q) >= 0); });
+  keys.sort(function (a, b) { return a === 'marathon' ? 1 : b === 'marathon' ? -1 : (a < b ? 1 : -1); });
+  $('archive').innerHTML = keys.length ? keys.map(function (k) {
+    return '<li class="arch"><button class="arch-head"><div class="arch-date">' + humanDay(k) + '</div>' +
+      '<div class="arch-prev">' + esc(d[k].split('\n')[0]) + '</div></button><div class="arch-full">' + esc(d[k]) + '</div></li>';
+  }).join('') : '<li class="empty">' + (q ? 'Ничего не нашлось.' : 'Здесь появятся твои записи за прошлые дни.') + '</li>';
+}
+$('archive').onclick = function (e) { var h = e.target.closest('.arch-head'); if (h) h.parentNode.classList.toggle('open'); };
+$('diarySearch').oninput = renderDiary;
+
+/* ========== МЕДИТАЦИЯ (стоп на 10:34) ========== */
+var MED_END = 634, med = $('medAudio');
+function medFmt(s) { s = Math.floor(s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+function medUi() {
+  var t = Math.min(med.currentTime || 0, MED_END);
+  $('medFill').style.width = (t / MED_END * 100) + '%';
+  $('medNow').textContent = medFmt(t);
+  $('medBtn').textContent = med.paused ? '▶' : '❚❚';
+}
+$('medBtn').onclick = function () {
+  if (med.paused) {
+    if (med.currentTime >= MED_END) med.currentTime = 0;
+    med.play().catch(function () { toast('Не удалось включить звук'); });
+  } else {
+    med.pause();
+  }
+};
+med.addEventListener('timeupdate', function () {
+  if (med.currentTime >= MED_END) { med.pause(); med.currentTime = MED_END; toast('Медитация завершена 🙏'); }
+  medUi();
 });
-html += '</div>';
-
-// Кнопка сброса недели
-html += '<div style="margin-top:28px;padding:20px;background:var(--dark-3);border:1px solid rgba(255,255,255,.06);border-radius:18px;text-align:center;">' +
-'<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Хочешь начать заново?</div>' +
-'<div style="font-size:13px;color:var(--text-dim);margin-bottom:16px;line-height:1.5;">Сбрось прогресс и начни марафон с Дня 1</div>' +
-'<button onclick="resetWeek()" style="background:rgba(224,92,92,.15);color:#ff6b6b;border:1px solid rgba(224,92,92,.3);border-radius:12px;padding:13px 24px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s;width:100%;">🔄 Начать марафон заново</button>' +
-'</div>';
-
-document.getElementById('progBody').innerHTML = html;
-setTimeout(function() {
-var f1 = document.getElementById('pbFill');
-var f2 = document.getElementById('pbTasks');
-if (f1) f1.style.width = pct + '%';
-if (f2) f2.style.width = (dtTotal > 0 ? Math.round(dtDone / dtTotal * 100) : 0) + '%';
-var f3 = document.getElementById('pbJournal');
-if (f3) f3.style.width = (journalDone > 0 ? Math.min(journalDone * 7, 100) : 0) + '%';
-}, 100);
-}
-
-/* ========== TTS ========== */
-var SY    = window.speechSynthesis;
-var SYV   = [];
-var litId = null;
-var paOn  = false;
-var paIdx = 0;
-
-function loadVoices() {
-function go() {
-var all = SY.getVoices();
-SYV = all.filter(function(v) { return v.lang.indexOf('ru') === 0; });
-if (!SYV.length) SYV = all;
-var s = document.getElementById('vSel');
-if (!s) return;
-s.innerHTML = '';
-SYV.forEach(function(v, i) {
-var o = document.createElement('option');
-o.value = i;
-o.textContent = v.name.replace(/Google|Microsoft/g, '').trim();
-s.appendChild(o);
-});
-}
-if (SY.getVoices().length) go(); else SY.onvoiceschanged = go;
-}
-
-function ttsSpeak(text, cb) {
-if (SY.speaking) SY.cancel();
-var u = new SpeechSynthesisUtterance(text);
-var s = document.getElementById('vSel');
-var r = document.getElementById('vRate');
-u.voice = SYV[s ? parseInt(s.value) : 0] || null;
-u.rate  = r ? parseFloat(r.value) : 0.85;
-u.pitch = 1.05;
-u.lang  = 'ru-RU';
-u.onend = u.onerror = function() { if (cb) cb(); };
-SY.speak(u);
-}
-
-function ttsHalt() {
-if (SY.speaking) SY.cancel();
-paOn  = false;
-litId = null;
-refreshAffCards();
-resetPA();
-}
+med.addEventListener('play', medUi);
+med.addEventListener('pause', medUi);
+$('medTrack').onclick = function (e) {
+  var r = this.getBoundingClientRect(), x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  med.currentTime = x * MED_END;
+  medUi();
+};
 
 /* ========== АФФИРМАЦИИ ========== */
-var affs = JSON.parse(localStorage.getItem('affs') || '[]');
-
-function saveAffs() { localStorage.setItem('affs', JSON.stringify(affs)); }
-
-function addAff() {
-var inp = document.getElementById('affIn');
-var t   = inp.value.trim();
-if (!t) {
-inp.style.borderColor = 'rgba(224,92,92,.5)';
-setTimeout(function() { inp.style.borderColor = ''; }, 1000);
-return;
+var SY = window.speechSynthesis, sayQueue = [];
+function ruVoice() { var v = SY ? SY.getVoices() : []; return v.filter(function (x) { return /^ru/i.test(x.lang); })[0] || null; }
+function speak(list) {
+  if (!SY) { toast('Озвучка не поддерживается'); return; }
+  SY.cancel(); sayQueue = list.slice();
+  (function next() {
+    document.querySelectorAll('.aff').forEach(function (a) { a.classList.remove('speaking'); });
+    var a = sayQueue.shift(); if (!a) return;
+    var li = document.querySelector('.aff[data-id="' + a.id + '"]'); if (li) li.classList.add('speaking');
+    var u = new SpeechSynthesisUtterance(a.text); u.lang = 'ru-RU'; u.rate = 0.9;
+    var v = ruVoice(); if (v) u.voice = v;
+    u.onend = u.onerror = function () { setTimeout(next, 500); };
+    SY.speak(u);
+  })();
 }
-affs.push({ id: Date.now(), text: t });
-saveAffs();
-inp.value = '';
-renderAffs();
-toast('✨ Аффирмация добавлена!');
-}
-
-function delAff(id) {
-ttsHalt();
-affs = affs.filter(function(a) { return a.id !== id; });
-saveAffs();
-renderAffs();
-}
-
-function speakOne(id) {
-var aff = null;
-for (var i = 0; i < affs.length; i++) if (affs[i].id === id) { aff = affs[i]; break; }
-if (!aff) return;
-if (litId === id && SY.speaking) { ttsHalt(); return; }
-ttsHalt();
-litId = id;
-refreshAffCards();
-ttsSpeak(aff.text, function() { litId = null; refreshAffCards(); });
-}
-
-function togglePA() {
-if (paOn) { ttsHalt(); return; }
-if (!affs.length) return;
-paOn  = true;
-paIdx = 0;
-document.getElementById('paIc').textContent = '⏹';
-document.getElementById('paTx').textContent = 'Остановить';
-document.getElementById('paBtn').classList.add('go');
-nextPA();
-}
-
-function nextPA() {
-if (!paOn || paIdx >= affs.length) {
-var fin = paOn && paIdx >= affs.length;
-ttsHalt();
-if (fin) toast('🌟 Все аффирмации прочитаны!');
-return;
-}
-var a = affs[paIdx];
-litId = a.id;
-refreshAffCards();
-ttsSpeak(a.text, function() {
-litId = null;
-refreshAffCards();
-paIdx++;
-setTimeout(nextPA, 800);
-});
-}
-
-function resetPA() {
-var b = document.getElementById('paBtn');
-if (!b) return;
-b.classList.remove('go');
-document.getElementById('paIc').textContent = '▶';
-document.getElementById('paTx').textContent = 'Прослушать все подряд';
-}
-
 function renderAffs() {
-var list  = document.getElementById('affList');
-var empty = document.getElementById('affEmpty');
-var pab   = document.getElementById('paBtn');
-var vr    = document.getElementById('vRow');
-if (!affs.length) {
-empty.style.display = 'block';
-pab.style.display   = 'none';
-vr.style.display    = 'none';
-list.innerHTML = '';
-return;
+  var affs = load('affs', []);
+  $('affAll').hidden = affs.length < 2;
+  $('affList').innerHTML = affs.length ? affs.map(function (a) {
+    return '<li class="aff" data-id="' + a.id + '"><button class="aff-play" data-act="play" aria-label="Прослушать">▶</button>' +
+      '<div class="aff-text">' + esc(a.text) + '</div><button class="task-del" data-act="del" aria-label="Удалить">×</button></li>';
+  }).join('') : '<li class="empty">Напиши первую аффирмацию — приложение прочитает её вслух.</li>';
 }
-empty.style.display = 'none';
-pab.style.display   = 'flex';
-vr.style.display    = 'block';
-list.innerHTML = affs.map(function(a, i) {
-return '<div class="aff-card" id="ac_' + a.id + '">' +
-'<div class="ac-text">' + esc(a.text) + '</div>' +
-'<div class="ac-row">' +
-'<div class="ac-play" onclick="speakOne(' + a.id + ')">▶</div>' +
-'<div class="ac-num">Аффирмация ' + (i + 1) + '</div>' +
-'<button class="ac-del" onclick="delAff(' + a.id + ')">×</button>' +
-'</div>' +
-'<div class="ac-bar"></div>' +
-'</div>';
-}).join('');
-refreshAffCards();
-}
-
-function refreshAffCards() {
-affs.forEach(function(a) {
-var c = document.getElementById('ac_' + a.id);
-if (!c) return;
-var p = c.querySelector('.ac-play');
-if (litId === a.id) {
-c.classList.add('lit');
-if (p) p.textContent = '⏸';
-} else {
-c.classList.remove('lit');
-if (p) p.textContent = '▶';
-}
-});
-}
-
-function esc(s) {
-return s.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
-}
-
-/* ========== TOAST ========== */
-function toast(msg) {
-var t = document.createElement('div');
-t.textContent = msg;
-t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-60px);' +
-'background:var(--dark-3);border:1px solid rgba(201,168,76,.35);color:var(--gold-light);' +
-'padding:12px 24px;border-radius:40px;font-size:13px;font-weight:500;z-index:9999;' +
-'transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;';
-document.body.appendChild(t);
-requestAnimationFrame(function() { t.style.transform = 'translateX(-50%) translateY(0)'; });
-setTimeout(function() {
-t.style.transform = 'translateX(-50%) translateY(-60px)';
-setTimeout(function() { t.remove(); }, 400);
-}, 2500);
-}
-
-/* ========== ПЛЕЕР МЕДИТАЦИИ ========== */
-function checkMedStop(audio) {
-  if (audio.currentTime >= 634) {
-    audio.pause();
-    audio.currentTime = 634;
-  }
-
-}
-
-
-
-/* ========== ПРОФИЛЬ ========== */
-var profile = JSON.parse(localStorage.getItem('profile') || '{}');
+$('affForm').onsubmit = function (e) {
+  e.preventDefault();
+  var v = $('affIn').value.trim(); if (!v) return;
+  var a = load('affs', []); a.push({id: newId(), text: v}); save('affs', a);
+  $('affIn').value = ''; renderAffs();
+};
+$('affList').onclick = function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  var id = b.closest('.aff').dataset.id, affs = load('affs', []);
+  if (b.dataset.act === 'play') speak(affs.filter(function (a) { return String(a.id) === id; }));
+  else { save('affs', affs.filter(function (a) { return String(a.id) !== id; })); renderAffs(); }
+};
+$('affAll').onclick = function () { speak(load('affs', [])); };
 
 /* ========== ТЕЛЕФОН ========== */
 var COUNTRIES = [
@@ -741,212 +352,103 @@ function markErr(id, msg) {
   el.focus();
 }
 
+
+/* ========== ПРОФИЛЬ ========== */
+function streak(d) {
+  var n = 0, x = new Date();
+  if (!d[dayKey(x)]) x.setDate(x.getDate() - 1);
+  while (d[dayKey(x)]) { n++; x.setDate(x.getDate() - 1); }
+  return n;
+}
+
 function loadProfile() {
-document.getElementById('meName').value    = profile.name    || '';
-document.getElementById('meEmail').value   = profile.email   || '';
-initCountries();
-var ph = splitPhone(profile.phone || '', profile.country || 'RU');
-setCountry(ph.key);
-document.getElementById('mePhone').value = formatNational(countryBy(ph.key)[3], ph.national);
-document.getElementById('mePointA').value  = profile.pointA  || '';
-document.getElementById('mePointB').value  = profile.pointB  || '';
-updatePoints();
+  initCountries();
+  $('meName').value = profile.name || '';
+  var ph = splitPhone(profile.phone || '', profile.country || 'RU');
+  setCountry(ph.key);
+  $('mePhone').value = formatNational(countryBy(ph.key)[3], ph.national);
+  $('meEmail').value = profile.email || '';
+  $('mePointA').value = profile.pointA || '';
+  $('mePointB').value = profile.pointB || '';
+  var d = load('diary', {});
+  $('stTasks').textContent = load('todo', []).filter(function (t) { return t.done; }).length;
+  $('stDays').textContent = Object.keys(d).filter(function (k) { return k !== 'marathon'; }).length;
+  $('stStreak').textContent = streak(d);
+  $('gate').hidden = profileOk();
+  $('stats').hidden = !profileOk();
 }
 
+$('saveMe').onclick = function () {
+  onPhoneInput();
+  var nm = $('meName').value.trim();
+  var em = $('meEmail').value.replace(/\s+/g, '');
+  document.querySelectorAll('.me-field.err').forEach(function (f) { f.classList.remove('err'); });
+  if (!nm) { markErr('meName', '👤 Напиши своё имя'); return; }
+  if (!phoneValid()) { markErr('mePhone', '📱 Проверь номер телефона'); return; }
+  if (em && !/^[^@]+@[^@]+\.[^@]+$/.test(em)) { markErr('meEmail', '📧 Проверь email'); return; }
+  var first = !profileOk();
+  profile.name = nm;
+  profile.email = em;
+  profile.country = curCountry()[0];
+  profile.phone = fullPhone();
+  profile.pointA = $('mePointA').value.trim();
+  profile.pointB = $('mePointB').value.trim();
+  save('profile', profile);
+  sendToSheets();
+  loadProfile();
+  renderHeader();
+  if (first) { toast('✅ Готово! Можно начинать'); showScreen('tasks'); }
+  else toast('✅ Профиль сохранён');
+};
+
+/* ========== ТАБЛИЦА ========== */
 var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxlZJ6foAXk9536Y_G4J7DzYr9tbFJoWdlWXqYahtVXUMi-vyGaGHhLy6yl2B6ZlWAu/exec';
-
-function saveProfile() {
-var nm = document.getElementById('meName').value.trim();
-var em = document.getElementById('meEmail').value.replace(/\s+/g, '');
-document.querySelectorAll('.me-field.err').forEach(function (f) { f.classList.remove('err'); });
-if (!nm) { markErr('meName', '👤 Напиши своё имя'); return; }
-if (em && !/^[^@]+@[^@]+\.[^@]+$/.test(em)) { markErr('meEmail', '📧 Проверь email'); return; }
-if (!phoneValid()) { markErr('mePhone', '📱 Проверь номер телефона'); return; }
-document.getElementById('meEmail').value = em;
-profile.name    = nm;
-profile.email   = em;
-profile.country = curCountry()[0];
-profile.phone   = fullPhone();
-profile.pointA = document.getElementById('mePointA').value.trim();
-profile.pointB = document.getElementById('mePointB').value.trim();
-localStorage.setItem('profile', JSON.stringify(profile));
-toast('✅ Профиль сохранён!');
-updatePoints();
-sendToSheets();
-}
 
 function getTz() {
   try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
 }
-
 function getUid() {
   var u = localStorage.getItem('uid');
-  if (!u) {
-    u = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-    localStorage.setItem('uid', u);
-  }
+  if (!u) { u = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); localStorage.setItem('uid', u); }
   return u;
 }
-
 function sendToSheets() {
-fetch(SHEETS_URL, {
-method: 'POST',
-mode: 'no-cors',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({
-sheet:  'Приложение',
-uid:    getUid(),
-tz:     getTz(),
-name:   profile.name,
-email:  profile.email,
-phone:  profile.phone,
-pointA: profile.pointA,
-pointB: profile.pointB
-})
-}).then(function() {
-console.log('Данные отправлены в таблицу');
-}).catch(function(err) {
-console.log('Ошибка отправки:', err);
-});
+  fetch(SHEETS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      sheet: 'Приложение', uid: getUid(), tz: getTz(),
+      name: profile.name, email: profile.email, phone: profile.phone,
+      pointA: profile.pointA, pointB: profile.pointB
+    })
+  }).catch(function () {});
 }
 
-function calcPoints() {
-var pts = 0;
-
-// За каждый завершённый день -- 10 баллов
-pts += doneDays.length * 10;
-
-// За каждую выполненную задачу дня -- 5 баллов
-for (var i = 1; i <= 7; i++) {
-if (dayTasks[i] && dayTasks[i].items) {
-dayTasks[i].items.forEach(function(it) { if (it.done) pts += 5; });
-}
-}
-
-// За каждый чекбокс (аффирмации и задачи) -- 2 балла
-Object.keys(tasks).forEach(function(dk) { pts += tasks[dk].length * 2; });
-
-// За заполненный профиль -- 5 баллов
-if (profile.name)   pts += 5;
-if (profile.pointA) pts += 5;
-if (profile.pointB) pts += 5;
-
-return pts;
-}
-
-function updatePoints() {
-var pts = calcPoints();
-var el  = document.getElementById('mePointsNum');
-var sub = document.getElementById('mePointsSub');
-if (el) el.textContent = pts;
-if (sub) {
-var msg = pts === 0
-? 'Выполняй задания и веди дневник -- получай баллы!'
-: pts < 30
-? 'Хорошее начало! Продолжай в том же духе.'
-: pts < 70
-? 'Отличный прогресс! Ты на верном пути.'
-: 'Невероятный результат! Ты настоящий чемпион!';
-sub.textContent = msg;
-}
-}
-
-/* ========== ДНЕВНИК ========== */
-function saveJournal(el) {
-journals[el.id] = el.value;
-localStorage.setItem('journals', JSON.stringify(journals));
-}
-
-/* ========== СБРОС НЕДЕЛИ ========== */
-function resetWeek() {
-var conf = confirm("Сбросить весь прогресс и начать заново с Дня 1?");
-if (!conf) return;
-
-// Очищаем все данные марафона
-doneDays = [];
-tasks    = {};
-dayTasks = {};
-journals = {};
-curDay   = 1;
-
-localStorage.removeItem('doneDays');
-localStorage.removeItem('tasks');
-localStorage.removeItem('dayTasks');
-localStorage.removeItem('journals');
-localStorage.setItem('curDay', '1');
-
-renderMain();
-renderProgress();
-toast('🔄 Марафон сброшен! Начинаем с Дня 1!');
-}
-
-
-
-/* ========== ТЕМА ========== */
-var currentTheme = localStorage.getItem('theme') || 'dark';
-
-function applyTheme(theme) {
-  var ic  = document.getElementById('themeIc');
-  var lbl = document.getElementById('themeLbl');
-  if (theme === 'light') {
-    document.body.classList.add('light');
-    if (ic)  ic.textContent  = '☀️';
-    if (lbl) lbl.textContent = 'Светлая';
-  } else {
-    document.body.classList.remove('light');
-    if (ic)  ic.textContent  = '🌙';
-    if (lbl) lbl.textContent = 'Тёмная';
-  }
-  currentTheme = theme;
-  localStorage.setItem('theme', theme);
-}
-
-function toggleTheme() {
-  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-}
-
-
-/* ========== TELEGRAM БОТ ========== */
+/* ========== TELEGRAM ========== */
 var TG_BOT = 'my_week_mentor_bot';
+
+$('tgBtn').onclick = function () {
+  if (!profileOk()) { toast('👤 Сначала сохрани имя и телефон'); return; }
+  $('tgOverlay').hidden = false;
+};
 
 function openTelegramBot() {
   var uid = getUid();
   var appLink = 'tg://resolve?domain=' + TG_BOT + '&start=' + uid;
   var webLink = 'https://t.me/' + TG_BOT + '?start=' + uid;
-  var ov = document.getElementById('tgOverlay');
-  if (ov) ov.remove();
-
-  // Открываем приложение Telegram напрямую, без промежуточного Safari
+  $('tgOverlay').hidden = true;
   var left = false;
   function onHide() { if (document.hidden) left = true; }
   document.addEventListener('visibilitychange', onHide);
   window.location.href = appLink;
-
-  // Если Telegram не установлен — через 1,5 сек открываем веб-версию
   setTimeout(function () {
     document.removeEventListener('visibilitychange', onHide);
     if (!left && !document.hidden) window.location.href = webLink;
   }, 1500);
 }
 
-function showReminderInfo() {
-  var overlay = document.createElement('div');
-  overlay.id = 'tgOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;';
-  overlay.innerHTML = '<div style="background:var(--dark-3);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:28px;max-width:360px;width:100%;text-align:center;">' +
-    '<div style="font-size:40px;margin-bottom:16px;">🔔</div>' +
-    '<div style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--gold-light);margin-bottom:14px;">Настройка напоминаний</div>' +
-    '<div style="font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:24px;">' +
-      'Напоминания работают через Telegram-бота.<br><br>' +
-      'Он будет напоминать о предстоящих событиях и присылать дополнительные бесплатные материалы и книги для самостоятельного прочтения.' +
-    '</div>' +
-    '<button onclick="openTelegramBot()" style="width:100%;background:var(--gold);color:var(--dark);border:none;border-radius:12px;padding:14px;font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-bottom:10px;">📱 Перейти в Telegram</button>' +
-    '<button onclick="document.getElementById(\'tgOverlay\').remove()" style="width:100%;background:none;border:1px solid rgba(255,255,255,.1);color:var(--text-dim);border-radius:12px;padding:12px;font-family:Montserrat,sans-serif;font-size:12px;cursor:pointer;">Закрыть</button>' +
-  '</div>';
-  document.body.appendChild(overlay);
-}
-
-/* ========== INIT ========== */
-applyTheme(currentTheme);
-renderMain();
+/* ========== ЗАПУСК ========== */
+setTheme(load('theme2', localStorage.getItem('theme') || 'dark'));
+renderTasks();
 renderAffs();
+if (!profileOk()) showScreen('me');
